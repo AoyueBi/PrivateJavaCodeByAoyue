@@ -5,12 +5,14 @@
  */
 package WheatGBS;
 
+import java.io.IOException;
+
 /**
  *
  * @author Aoyue
  */
 public class GBSEntraince {
-    public GBSEntraince(){
+    public GBSEntraince() throws IOException{
         //this.PlateAndID();
         this.DataProcessor();
         
@@ -20,11 +22,11 @@ public class GBSEntraince {
         new PlateAndID();
         
     }
-    public void DataProcessor(){
-        //new DataProcessor();
-        new GBScp();
+    public void DataProcessor() throws IOException{
+        new DataProcessor();
+        //new GBScp();
     }
-    public static void main (String[] args){
+    public static void main (String[] args) throws IOException{
         new GBSEntraince();
         
     }  

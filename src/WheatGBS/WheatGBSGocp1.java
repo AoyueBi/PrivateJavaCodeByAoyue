@@ -15,25 +15,25 @@ import utils.IOUtils;
  *
  * @author feilu
  */
-public class WheatGBSGocp {
+public class WheatGBSGocp1 {
     
-    public WheatGBSGocp () {
+    public WheatGBSGocp1 () {
         this.testLibraryUniformity();
     }
     
     public void testLibraryUniformity () {
         String barcodeFileS = "/Users/Aoyue/Documents/IGDB/4-PHD/wheat/GBS取样/02IlluminaSeq/barcode/20180601_GBSLibrarybarcode.txt";
-        String r1FileS = "/Users/Aoyue/Downloads/2.cleandata/20180601-51-NEB12_TKD180600155/20180601-51-NEB12_TKD180600155_1.clean.fq.gz";
-        String r2FileS = "/Users/Aoyue/Downloads/2.cleandata/20180601-51-NEB12_TKD180600155/20180601-51-NEB12_TKD180600155_2.clean.fq.gz";
-        String outFileS = "/Users/Aoyue/Documents/IGDB/4-PHD/wheat/GBS取样/02IlluminaSeq/result/uniformity.txt";
+        String r1FileS = "/Users/Aoyue/Downloads/20180601-51-NEB12_TKD180600155_1.clean.fq";
+        String r2FileS = "/Users/Aoyue/Downloads/20180601-51-NEB12_TKD180600155_1.clean.fq";
+        String outFileS = "/Users/Aoyue/Documents/IGDB/4-PHD/wheat/GBS取样/02IlluminaSeq/result/uniformity1.txt";
         
         PEBarcodeParsercp pbp = new PEBarcodeParsercp(barcodeFileS);
         String[] taxa = pbp.getTaxa();
         int[] taxaCnt = new int[taxa.length];
         int nullCnt = 0;
         try {
-            BufferedReader br1 = IOUtils.getTextGzipReader(r1FileS);
-            BufferedReader br2 = IOUtils.getTextGzipReader(r2FileS);
+            BufferedReader br1 = IOUtils.getTextReader(r1FileS);
+            BufferedReader br2 = IOUtils.getTextReader(r2FileS);
             String temp1 = null;
             String temp2 = null;
             while ((temp1 = br1.readLine()) != null) {
@@ -55,7 +55,7 @@ public class WheatGBSGocp {
             bw.write("Taxa\tCount");
             bw.newLine();
             for (int i = 0; i < taxa.length; i++) {
-                bw.write(taxa[i]+"\t"+String.valueOf(taxaCnt[i])); /*将数字转化为字符串*/
+                bw.write(taxa[i]+"\t"+String.valueOf(taxaCnt[i]));
                 bw.newLine();
             }
             bw.flush();
@@ -69,7 +69,7 @@ public class WheatGBSGocp {
     
     
     public static void main (String[] args) {
-        new WheatGBSGocp ();
+        new WheatGBSGocp1 ();
     }
     
 }
