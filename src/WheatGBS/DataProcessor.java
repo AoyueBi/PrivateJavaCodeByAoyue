@@ -25,7 +25,7 @@ public class DataProcessor {
         //this.sample();
        //this.checkMd51();
         //this.runtime();
-       //this.checkMd5();
+       this.checkMd5();
        this.mergeFile();
         
     }
@@ -97,10 +97,7 @@ public class DataProcessor {
         catch (Exception e){
             e.printStackTrace();
             System.exit(1);
-        }
-        
-            
-        
+        }       
     }
     
     public void runtime() throws IOException{         
@@ -111,8 +108,7 @@ public class DataProcessor {
             String cmd = sb.toString();
             System.out.println(cmd);
             Runtime run = Runtime.getRuntime();   
-            Process p = run.exec(cmd);
-            
+            Process p = run.exec(cmd);           
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             StringBuffer ssb = new StringBuffer();
             String line;
