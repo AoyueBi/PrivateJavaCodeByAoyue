@@ -5,7 +5,6 @@
  */
 package WheatGBS;
 
-import analysis.wheat.GBS.*;
 import format.table.RowTable;
 import java.util.ArrayList;
 import java.util.Arrays;

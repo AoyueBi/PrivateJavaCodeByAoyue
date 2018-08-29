@@ -5,16 +5,20 @@
  */
 package WheatGBS;
 
+import format.table.RowTable;
+import format.table.TableInterface;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.IOUtils;
+import utils.PStringUtils;
 
 /**
  *
@@ -23,17 +27,62 @@ import utils.IOUtils;
 public class DataProcessor {
     public DataProcessor() throws IOException{
         //this.sample();
-       //this.checkMd51();
+       //this.mkMd51();
         //this.runtime();
+        //this.mergeFile();
+       //this.mkMd5();
        this.checkMd5();
-       this.mergeFile();
+       
+       
         
     }
     
-    public void checkMd5(){
+    private void checkMd5() {
+        //ori 文件 54de998c7883a4592a1683bec2590d64  K16HL0119_1_clean.fq.gz
+        //des文件 MD5 (/Users/Aoyue/Downloads/huadagene/WHB5EXONPEP00010496/180803_I13_V100004234_L1_WHEkapRAADT-585_1.clean.fq.gz) = 472e1633b40b0ae3866a820f5b8637a5
+        String ori = "/Users/Aoyue/Downloads/huadagene/WHB5EXONPEP00010496/md5.txt"; //原始md5
+        String des = "/Users/Aoyue/Downloads/huadagene/WHB5EXONPEP00010496/checkmd5.txt"; //mac生成的md5文件
+        HashMap<String, String> fmd5Map = new HashMap<>(); //建立一个键值对应的hashmap,此时hashmap为空。下文会把原始的ori文件放入hashmap中去
+        TableInterface oT = new RowTable(ori, "  "); //分隔符是2个空格，将ori文件读进表格
+        TableInterface dT = new RowTable(des, " "); //分隔符是1个空格，将des文件读进表格
+        try{
+            BufferedReader br = IOUtils.getTextReader(ori);
+            String temp;
+            List<String> l = null;
+            while((temp = br.readLine()) != null){
+                l = PStringUtils.fastSplit(temp, "  ");
+                fmd5Map.put(l.get(1), l.get(0));
+            }
+            br.close();
+            int cnt = 0;
+            br = IOUtils.getTextReader(des);
+            while((temp = br.readLine()) != null){
+                l = PStringUtils.fastSplit(temp, " ");
+                String key = l.get(1).split("00010496/")[1].replaceFirst("\\)", "");
+                String value = fmd5Map.get(key);
+                if (value == null) { //如果value为空，则为真。
+                System.out.println(key+"\tdoesn't exist");
+                continue;
+            }
+            if (value.equals(l.get(3))) {
+                cnt++;
+                continue;
+            }
+            System.out.println(key + "\t is incorrect");
+            }
+            System.out.println(cnt + " key is correct");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+    
+    
+    public void mkMd5(){
         /*该方法只用将文件输入路径和输出文件名进行修改，即可使用*/
-        String inputDirS = "/Users/Aoyue/Documents/testCheckMd5/";
-        String outfileS = "/Users/Aoyue/Documents/checkmd52.txt";
+        String inputDirS = "/Users/Aoyue/Downloads/huadagene/WHB5EXONPEP00010496";
+        String outfileS = "/Users/Aoyue/Downloads/huadagene/WHB5EXONPEP00010496/checkmd5.txt";
         try {
             StringBuilder sb = new StringBuilder();
             BufferedWriter bw = IOUtils.getTextWriter(outfileS);
@@ -63,7 +112,7 @@ public class DataProcessor {
             bw.write(result);
             bw.flush();
             bw.close();            
-            System.out.println("md5Check is finished at" + outfileS);
+            System.out.println("md5Check is finished at " + outfileS);
         }
         catch (Exception e) {
             System.out.println(e.toString());
@@ -129,7 +178,7 @@ public class DataProcessor {
         System.out.println("md5Check is finished");
     }
     
-    public void checkMd51(){
+    public void mkMd51(){
         String infileDirS = "/Users/Aoyue/Documents/testCheckMd5";
         //String outfileS = "/Users/Aoyue/Documents/testCheckMd5.txt";
         File fsall = new File(infileDirS);

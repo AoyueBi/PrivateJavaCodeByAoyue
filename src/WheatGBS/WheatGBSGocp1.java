@@ -5,7 +5,6 @@
  */
 package WheatGBS;
 
-import analysis.wheat.GBS.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.Arrays;
