@@ -26,12 +26,12 @@ import utils.PStringUtils;
  */
 public class DataProcessor {
     public DataProcessor() throws IOException{
-        //this.sample();
+        this.sample();
        //this.mkMd51();
         //this.runtime();
         //this.mergeFile();
        //this.mkMd5();
-       this.checkMd5();
+       //this.checkMd5();
        
        
         
@@ -119,6 +119,8 @@ public class DataProcessor {
             System.exit(1);       
         }       
     }
+    
+    
     public void mergeFile(){
         String inputDirS = "/Users/Aoyue/Documents/testCheckMd5/";
         String outfileS = "/Users/Aoyue/Documents/orimd5_merge.txt";
@@ -216,9 +218,9 @@ public class DataProcessor {
     }
    
     public void sample(){
-        String infileS = "/Users/Aoyue/Downloads/2.cleandata/20180601-51-NEB12_TKD180600155/20180601-51-NEB12_TKD180600155_1.clean.fq.gz";
-        String outfileS = "/Users/Aoyue/Downloads/20180601-51-NEB12_TKD180600155_1.clean.fq";
-        int length = 120000;
+        String infileS = "/Volumes/Lulab3T_14/maize_germ/001_genotype/282/282_libs_2015/uplifted_APGv4/hmp321_agpv4_chr1.vcf.gz";
+        String outfileS = "/Volumes/Lulab3T_14/maize_germ/001_genotype/282/282_libs_2015/uplifted_APGv4/hmp321_agpv4_chr1_100sites.vcf";
+        int length = 100;
         try{
             BufferedReader br = IOUtils.getTextGzipReader(infileS);
             BufferedWriter bw = IOUtils.getTextWriter(outfileS);

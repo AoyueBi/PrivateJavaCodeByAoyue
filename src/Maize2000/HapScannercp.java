@@ -5,7 +5,6 @@
  */
 package Maize2000;
 
-import analysis.maize2k.*;
 import static cern.jet.math.Arithmetic.factorial;
 import com.koloboke.collect.map.IntDoubleMap;
 import com.koloboke.collect.map.hash.HashIntDoubleMaps;

@@ -5,7 +5,6 @@
  */
 package Maize2000;
 
-import analysis.maize2k.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

@@ -5,7 +5,6 @@
  */
 package Maize2000;
 
-import analysis.maize2k.*;
 import format.table.RowTable;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,11 +1,12 @@
+
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Maize2000;
+package maizeGeneticLoad;
 
-import analysis.maizeGeneticLoad.*;
 import com.koloboke.collect.map.hash.HashIntIntMap;
 import com.koloboke.collect.map.hash.HashIntIntMaps;
 import format.table.RowTable;
@@ -32,12 +33,13 @@ class GERPcp {
     
     public void convertToV4GerpFile () {
         //this.mkAGPV3BED();
-        this.crossMapConvert();
-//        this.makeV3V4Map();
+        //this.crossMapConvert();
+        this.makeV3V4Map();
+        this.mkV3V4mapBYBIXIAOYUE();
 //        this.mkV4Gerp();
     }
     
-    public void mkV4Gerp () {
+     public void mkV4Gerp () {
         String inGerpDirS = "/Users/feilu/Documents/analysisL/production/maizeLoad/gerp/agpV3";
         String v3v4MapDirS = "/Users/feilu/Documents/database/maize/crossMap/V3V4Map";
         String outGerpDirS = "/Users/feilu/Documents/analysisL/production/maizeLoad/gerp/agpV4";
@@ -108,19 +110,56 @@ class GERPcp {
             }
         });
     }
+     
+    public void mkV3V4mapBYBIXIAOYUE(){
+        String V3infileDirs = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/temp1";
+        String V4infileDirs = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/temp2";
+        String outfileDirs = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/V3V4map";
+        File[] f1 = new File(V4infileDirs).listFiles();
+        f1 = IOUtils.listFilesEndsWith(f1, ".bed");
+        List<File> fList = Arrays.asList(f1);
+        fList.parallelStream().forEach(f -> {
+            String V3infileS = new File(V3infileDirs, f.getName()).getAbsolutePath();
+            String unmap = new File(V4infileDirs,f.getName().replaceFirst(".bed", ".bed.unmap")).getName();
+            String outfileS = new File(outfileDirs, f.getName().replaceFirst(".bed.unmap", "_xiaoyue.map")).getAbsolutePath();
+            //File[] unmap = IOUtils.listFilesEndsWith(new File(V4infileDirs).listFiles(),"unmap");
+            //为了找到对应的unmap文件
+            //List<File> unmapList = Arrays.asList(unmap);
+            //int Index = Integer.parseInt(f.getName().replaceFirst("chr", "").replaceFirst(".map", ""));     
+            List unmapList = null;
+            String temp = null;
+            try{
+                BufferedReader br = IOUtils.getTextReader(unmap);
+                while((temp = br.readLine()) != null){
+                    temp = PStringUtils.fastSplit(temp).get(1);
+                    unmapList.add(temp);
+                }
+                BufferedReader br1 = IOUtils.getTextReader(V3infileS);
+                BufferedReader br2 = IOUtils.getTextReader(f.getName());
+                while((temp = br1.readLine()) != null){
+                    
+                }
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+        });
+    }
     
     public void makeV3V4Map () {
-        String inDirS = "/Users/feilu/Documents/database/maize/crossMap/temp";
-        String inCMDirS = "/Users/feilu/Documents/database/maize/crossMap/temp2";
-        String outDirS = "/Users/feilu/Documents/database/maize/crossMap/V3V4Map";
+        String inDirS = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/temp1";
+        String inCMDirS = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/temp2";
+        String outDirS = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/V3V4map";
         File[] fs = new File(inDirS).listFiles();
         fs = IOUtils.listFilesEndsWith(fs, "bed");
         List<File> fList = Arrays.asList(fs);
-        fList.parallelStream().forEach(f -> {
-            String outfileS = new File(outDirS, f.getName().replaceFirst(".bed", ".map")).getAbsolutePath();
+        fList.stream().forEach(f -> {
+            String outfileS = new File(outDirS, f.getName().replaceFirst(".bed", "_aoyue2Method.map")).getAbsolutePath();
             String unmapFileS = new File(inCMDirS, f.getName()+".unmap").getAbsolutePath();
             String mapFileS = new File(inCMDirS, f.getName()).getAbsolutePath();
             TIntArrayList unPosList = new TIntArrayList();
+            
             try {
                 /*先读入没有比对上的文件chr001.bed.unmap，将第2列的位置信息加入unPosList中，并转化为数组，排序；
                 将chr001.bed V3版本的读入br，将chr001.bed V4版本的读入br2，将map文件写出 V3V4Map路径中，格式为 chr Pos_V3 Pos_V4,
@@ -135,10 +174,9 @@ class GERPcp {
                         }
                         sb.append(l.get(1));
                 这个循环的解释：
-                
-                
+                实践证明，不需要加循环。
                 */
-                BufferedReader br = IOUtils.getTextReader(unmapFileS);
+                BufferedReader br = IOUtils.getTextReader(unmapFileS); 
                 String temp = null;
                 List<String> l = null;
                 while ((temp = br.readLine()) != null) {
@@ -151,7 +189,7 @@ class GERPcp {
                 br = IOUtils.getTextReader(f.getAbsolutePath());
                 BufferedReader br2 = IOUtils.getTextReader(mapFileS);
                 BufferedWriter bw = IOUtils.getTextWriter(outfileS);
-                bw.write("Chr\tPos_V3\tPos_V4");
+                bw.write("Chr_V3\tPos_V3\tChr_V4\tPos_V4");
                 bw.newLine();
                 String temp1 = null;
                 StringBuilder sb = new StringBuilder();
@@ -160,20 +198,21 @@ class GERPcp {
                     l = PStringUtils.fastSplit(temp);  /*Temp是V3格式的文件坐标*/
                     sb = new StringBuilder(l.get(0));
                     int query = Integer.parseInt(l.get(1));
-                    sb.append("\t").append(query).append("\t");
                     int index = Arrays.binarySearch(unPos, query);
+                    int pos = query+1;
+                    sb.append("\t").append(pos).append("\t");                   
                     if (index < 0)  {
-                        while (cnt < query) {
-                            cnt++;
+                        //while (cnt < pos) {
+                           // cnt++;
                             temp1 = br2.readLine();
                             l = PStringUtils.fastSplit(temp1);
-                        }
-                        sb.append(l.get(1));
+                       // }
+                        sb.append(l.get(0)).append("\t").append(Integer.parseInt(l.get(1))+1);
                     
                     }
                     else {
-                        sb.append("NA");
-                        cnt++;
+                        sb.append("NA").append("\t").append("NA");
+                       // cnt++;
                     }
                     bw.write(sb.toString());
                     bw.newLine();
@@ -184,6 +223,7 @@ class GERPcp {
                 bw.close();
             }
             catch (Exception e) {
+                //System.out.println(temp);
                 e.printStackTrace();
             }
         });
@@ -196,7 +236,7 @@ class GERPcp {
         String myPythonPath = "/Users/Aoyue/miniconda3/bin/python";
         String myCrossMapPath = "/Users/Aoyue/miniconda3/bin/CrossMap.py";
         String myMaizeChainPath = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/AGPv3_to_AGPv4.chain.gz";
-        String intDirS = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/temp";
+        String intDirS = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/temp1";
         String outDirS = "/Users/Aoyue/Documents/Data/referenceGenome/crossMap/temp2";
         new File (outDirS).mkdir();
         File[] fs = new File(intDirS).listFiles();
@@ -208,8 +248,8 @@ class GERPcp {
             cm.convert();
         });
     }
-    
-    public void mkAGPV3BED () {
+        
+   public void mkAGPV3BED () {
         String infileS = "/data1/home/aoyue/position/ChrLenCentPosi_agpV3.txt";
         String outDirS = "/data1/home/aoyue/position/temp";
         /*研究思路：表格读入并进去循环 -- 将第一列的染色体信息写进list整型类型中 -- 将第二列的染色体长度信息（一共10条）写入一个整型数组中
@@ -224,16 +264,13 @@ class GERPcp {
             chrLength[i] = Integer.parseInt(t.getCell(i, 1));
         }
         chrList.parallelStream().forEach(chr -> {
-            String outfileS = new File (outDirS, "chr"+PStringUtils.getNDigitNumber(3, chr)+".bed").getAbsolutePath(); 
+            String outfileS = new File (outDirS, "chr"+PStringUtils.getNDigitNumber(3, chr)+".bed").getAbsolutePath();
             try {
                 BufferedWriter bw = IOUtils.getTextWriter(outfileS);
                 StringBuilder sb = new StringBuilder();
-                sb.append(chr).append("\t").append(0).append("\t").append(0);
-                bw.write(sb.toString());
-                bw.newLine();
                 for (int i = 0; i < chrLength[chr-1]; i++) {
                     sb = new StringBuilder();
-                    sb.append(chr).append("\t").append(i+1).append("\t").append(i+1);
+                    sb.append(chr).append("\t").append(i).append("\t").append(i);
                     bw.write(sb.toString());
                     bw.newLine();
                 }

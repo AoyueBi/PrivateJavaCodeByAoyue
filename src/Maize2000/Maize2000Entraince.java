@@ -9,7 +9,9 @@ import format.table.RowTable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import utils.CrossMapUtils;
 import utils.IOFileFormat;
@@ -22,9 +24,9 @@ import utils.PStringUtils;
  */
 public class Maize2000Entraince {
     public Maize2000Entraince(){
-        //this.otherClass();
+        this.otherClass();
         //this.mergeCountVariantFile();
-        this.crossMapConvert();
+       // this.crossMapConvert();
        
         
        
@@ -83,11 +85,17 @@ public class Maize2000Entraince {
     public void otherClass(){
         //new HapMap3Processorcp();
         //new HapMapTaxaProcessorcp();
-        new GERPcp();
+        //new GERPcp();
+        //new SIFTcp();
+        new FastqQualitycp();
         
     }
-    public static void main (String[] args){
+    public static void main (String[] args) throws IOException{
+        System.out.println("hello");
         new Maize2000Entraince();
+     
+        
+       
     }
     
 }

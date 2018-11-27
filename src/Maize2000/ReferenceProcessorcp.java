@@ -5,7 +5,6 @@
  */
 package Maize2000;
 
-import analysis.maize2k.*;
 import format.dna.FastaByte;
 import java.io.File;
 import java.util.ArrayList;

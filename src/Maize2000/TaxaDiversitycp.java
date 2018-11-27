@@ -5,7 +5,6 @@
  */
 package Maize2000;
 
-import analysis.maizeRNASeq.*;
 import format.table.RowTable;
 import format.tree.Newick;
 import java.io.BufferedReader;
