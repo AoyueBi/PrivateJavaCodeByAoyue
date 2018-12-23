@@ -31,54 +31,83 @@ public class WheatBWA {
     public WheatBWA(){
         //this.mkMd5();
         //this.checkMd5();
-        this.fastQC();
+        //this.fastQC();
         //this.alignBWA();
         //this.listSpecificalFiles();
         //this.testspilt();
         //this.samtoolsSort();
         //this.samtoolsMerge();
-        //this.pipeline();
+        this.pipeline();
         
     }
     
+    /**
+     * 本程序适合于一个样品的深测序质控；每个脚本单独运行完毕后，开始运行下一个脚本。
+     * 输出脚本目录：ScriptParentS
+     * 数据输出父目录：HPCS
+     * Name列表：infileS
+     * 原始数据文件夹：rawdataDirS
+     */
+    
     public void pipeline(){
-        String parentFileS = "/Users/Aoyue/Documents/output20181219wheat-pcr-free/a-output/"; //在本地主机上建立工作文件夹
-        String HPCS = "/data2/aoyue/a-output/"; //集群工作父目录
-        String ScriptParentS = "/Users/Aoyue/Documents/output20181219wheat-pcr-free/001_script/"; //脚本生成文件父目录
-        String bamS = "bamfile/"; 
-        String mergeS = "mergefile/";
-        String statS = "statsfile/";
-        String testS = "testbamfile/";
         
-        /*********************** 建立工作区 ****************************************/
+        String parentFileS = "/Users/Aoyue/Documents/output20181219wheat-pcr-free/a-output/"; //在本地主机上 建立工作文件夹
+        String HPCS = "/data2/aoyue/a-output/"; //集群工作父目录
+        String ScriptParentS = "/Users/Aoyue/Documents/output20181219wheat-pcr-free/script/"; //脚本生成文件 父目录
+        String bamS = "bamfile/";  //子文件夹
+        String mergeS = "mergefile/"; //子文件夹
+        String statS = "statsfile/"; //子文件夹
+        String testS = "testbamfile/"; //子文件夹
+        
+        /*********************** 建立工作区(在本地路径中) **************************/
+        new File(parentFileS).mkdirs();
         new File(parentFileS,bamS).mkdirs();
         new File(parentFileS,mergeS).mkdirs();
         new File(parentFileS,statS).mkdirs();
         new File(parentFileS,testS).mkdirs();
         
-        String infileS = "/Users/Aoyue/Documents/output20181219wheat-pcr-free/001_script/SM8.t.txt";
+        /*********************** 建立工作区(在HPC中) **************************/
+        String mkdirScriptS = ScriptParentS +"000_mkdir.sh";
+        try{
+            BufferedWriter bw = IOUtils.getTextWriter(mkdirScriptS);
+            bw.write("mkdir " + HPCS);bw.newLine();
+            bw.write("mkdir " + HPCS + bamS);bw.newLine();
+            bw.write("mkdir " + HPCS + mergeS);bw.newLine();
+            bw.write("mkdir " + HPCS + statS);bw.newLine();
+            bw.write("mkdir " + HPCS + testS);bw.newLine();
+            bw.flush();bw.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        String infileS = "/Users/Aoyue/Documents/output20181219wheat-pcr-free/001_script/SM8.t.txt"; // 建立Name列表
+        //String infileS = "/Users/Aoyue/Documents/test2M.txt"; //测试数据
         RowTable<String> t = new RowTable<>(infileS);
         List<String> namelist = t.getColumn(0);
         Collections.sort(namelist);
         String[] names = namelist.toArray(new String[namelist.size()]);
+        Arrays.sort(names);
         
         
-        String bwaThread = "16";  //根据实际情况修改，使用的线程数
-        String indexFileS = "/data1/publicData/wheat/reference/v1.0/ABD/bwaLib/abd_iwgscV1.fa.gz";
-        String rawdataDirS = "/data2/aoyue/a-wheatRawdata1219";
-        String bamfileDirS = HPCS + bamS;
+        String bwaThread = "8";  //根据实际情况修改，使用的线程数
+        String indexFileS = "/data1/publicData/wheat/reference/v1.0/ABD/bwaLib/abd_iwgscV1.fa.gz"; //比对参考基因组index library
+        //String rawdataDirS = "/data2/aoyue/a-wheatRawdata1219";
+        String rawdataDirS = "/data2/aoyue/test/"; //原始数据文件夹
+        String bamfileDirS = HPCS + bamS; 
         String bwaScriptS = ScriptParentS +"001_bwa.sh";
         
         
         String sortScriptS = ScriptParentS + "002_sort.sh";
-        String sortMemory = "10G";
-        String sortThread = "10";
+        String sortMemory = "10G"; //根据实际情况修改，每个线程使用的最大内存
+        String sortThread = "10"; //根据实际情况修改，使用的线程数
         
         String mergefileDirS = HPCS + mergeS;
         String mergeName = "mergeWheat" + String.valueOf(names.length) + "SM.bam";
         String mergeScriptS = ScriptParentS + "003_merge.sh";
         
-        String RefSeqS = "/data1/publicData/wheat/reference/v1.0/ABD/abd_iwgscV1.fa";
+        String RefSeqS = "/data1/publicData/wheat/reference/v1.0/ABD/abd_iwgscV1.fa"; //统计stat需要解压的ref fa文件
         String bamQCScriptS = ScriptParentS + "004_bamQC.sh";
         String statfileDirS = HPCS + statS;
         
@@ -173,6 +202,13 @@ public class WheatBWA {
                     .append(statfileDirS).append(mergeName).append(".bc");
             bw.write(sb.toString());
             bw.newLine();
+            
+            sb = new StringBuilder();
+            sb.append("samtools flagstat ").append(mergefileDirS).append(mergeName).append(" > ").append(mergefileDirS).append(mergeName).append(".flagstat.txt &");
+            bw.write(sb.toString());
+            bw.newLine();
+            
+            
             bw.flush();bw.close();
             
             BufferedReader br = IOUtils.getTextReader(bamQCScriptS);
@@ -461,7 +497,8 @@ public class WheatBWA {
 //        String inputDirS = "/Users/Aoyue/Downloads/huadagene/WHB5EXONPEP00010496";
 //        String outfileS = "/Users/Aoyue/Downloads/huadagene/WHB5EXONPEP00010496/checkmd5.txt";
         //String inputDirS = "/Users/Aoyue/Documents/Data/project/WheatGBSVI/02IlluminaSeq/data/2.cleandata/20180601-51-NEB12_TKD180600155";
-        String inputDirS = "/Users/Aoyue/Documents/P18Z12200N0030_WHEsikR/Clean/WHYD18111796_A";
+        //String inputDirS = "/Users/Aoyue/Documents/P18Z12200N0030_WHEsikR/Clean/WHYD18111796_A";
+        String inputDirS = "/Volumes/LuLab3T_42/a-wheatRawdata1219";
         String outfileS = "/Users/Aoyue/Documents/output20181219wheat-pcr-free/Wheat20181219.md5.txt";
         String suffix = ".gz";
         
