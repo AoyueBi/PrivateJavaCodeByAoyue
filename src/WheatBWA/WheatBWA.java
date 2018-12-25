@@ -7,6 +7,7 @@ package WheatBWA;
 
 import WheatGBS.DataProcessor;
 import WheatGBS.PlateAndID;
+import com.google.common.primitives.Bytes;
 import format.table.RowTable;
 import format.table.TableInterface;
 import java.io.BufferedReader;
@@ -31,14 +32,208 @@ public class WheatBWA {
     public WheatBWA(){
         //this.mkMd5();
         //this.checkMd5();
+        //this.sampleData();
         //this.fastQC();
         //this.alignBWA();
         //this.listSpecificalFiles();
         //this.testspilt();
         //this.samtoolsSort();
         //this.samtoolsMerge();
-        this.pipeline();
+        //this.pipeline();
+        //this.sampleFastq();
+        //this.testString();
+        //this.statReadLength();
+        this.statScore();
         
+    }
+    
+
+    public void statScore () {
+        String infileDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/001_sampleFq/";
+        File[] fs = new File(infileDirS).listFiles();
+        fs = IOUtils.listFilesEndsWith(fs, "_1.fq.gz");
+        HashSet<String> nameSet = new HashSet();
+        for (int i = 0; i < fs.length; i++) {
+            if (fs[i].isHidden()) continue;
+            nameSet.add(fs[i].getName().split("_1")[0]);
+        }
+        nameSet.parallelStream().forEach(name -> {
+            String infile1 = new File (infileDirS, name+"_1.fq.gz").getAbsolutePath();
+            String infile2 = new File (infileDirS, name+"_2.fq.gz").getAbsolutePath();
+            try{
+                BufferedReader br1 = IOUtils.getTextGzipReader(infile1);
+                BufferedReader br2 = IOUtils.getTextGzipReader(infile2);
+                String temp = null;
+                int allreads =0;
+                int unqualifiedReads =0;
+                while ((temp = br1.readLine()) != null) {
+                    allreads++;
+                    String line1 = br2.readLine();
+                    String reads1 = br1.readLine(); String reads2 = br2.readLine();
+                    String jia1 = br1.readLine(); String jia2 = br2.readLine(); 
+                    String quality1 = br1.readLine(); String quality2 = br2.readLine();
+                     
+                    /****对1端的reads进行统计，将质量值转化为字符数组，进行ASCII转换，再排序，取前10个进行比较*****/
+                    char[] chars = quality1.toCharArray(); 
+                    byte[] b = new byte[chars.length];
+                    for(int i=0;i <chars.length; i++){
+                        b[i] = (byte)chars[i] ;
+                        //System.out.println(b[i]);
+                    }
+                    Arrays.sort(b);
+                    byte[] byte10 = Arrays.copyOfRange(b, 0, 10);
+                    
+                    int cal =0; //每次进行内部定义，判断这10个值的大小并统计；
+                    for(byte i : byte10){
+//                        if(i < 36) { //Phred值 3 + 33 
+//                            cal++;
+//                        }
+                        if(i < 43) { //Phred值 10 + 33 
+                            cal++;
+                        }
+//                        if(i < 48) { //Phred值 15 + 33 
+//                            cal++;
+//                        }
+//                        if(i < 53) { //Phred值 20 + 33 
+//                            cal++;
+//                        }
+//                        if(i < 55) { //Phred值 22 + 33 
+//                            cal++;
+//                        }
+//                        if(i < 63) { //Phred值 30 + 33 
+//                            cal++;
+//                        }
+                        //System.out.println(i);
+                    }
+                    if(cal > 9){
+                        unqualifiedReads++;
+                        
+                        //System.out.println(cal);
+                        //System.out.println(name + "_1.score.......... this read 不合格");
+                    }
+                }
+                double ratio = unqualifiedReads/allreads;
+                System.out.println(unqualifiedReads + "\t" + name.split("-")[1]);
+                //System.out.println(ratio + "\t小于20" + name + "_1.score");
+               br1.close();
+               br2.close();   
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        });
+    }
+    
+    public void statReadLength () {
+        String infileDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/001_sampleFq/";
+        String outputDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/003_readsLength/";
+        File[] fs = new File(infileDirS).listFiles();
+        fs = IOUtils.listFilesEndsWith(fs, "_1.fq.gz");
+        HashSet<String> nameSet = new HashSet();
+        for (int i = 0; i < fs.length; i++) {
+            if (fs[i].isHidden()) continue;
+            nameSet.add(fs[i].getName().split("_1")[0]);
+        }
+        nameSet.parallelStream().forEach(name -> {
+            String infile1 = new File (infileDirS, name+"_1.fq.gz").getAbsolutePath();
+            String infile2 = new File (infileDirS, name+"_2.fq.gz").getAbsolutePath();
+            String outfile1 = new File (outputDirS, name+"_1.readLength.txt").getAbsolutePath();
+            String outfile2 = new File (outputDirS, name+"_2.readLength.txt").getAbsolutePath();
+            try{
+                BufferedReader br1 = IOUtils.getTextGzipReader(infile1);
+                BufferedReader br2 = IOUtils.getTextGzipReader(infile2);
+                BufferedWriter bw1 = IOUtils.getTextWriter(outfile1);
+                BufferedWriter bw2 = IOUtils.getTextWriter(outfile2);
+                String temp = null;
+                int cnt =0;
+                bw1.write("ID\tReadsLength");bw1.newLine();
+                bw2.write("ID\tReadsLength");bw2.newLine();
+                while ((temp = br1.readLine()) != null) {
+                    cnt ++;
+                    String line1 = br2.readLine();
+                    String reads1 = br1.readLine(); String reads2 = br2.readLine();
+                    String jia1 = br1.readLine(); String jia2 = br2.readLine(); 
+                    String quality1 = br1.readLine(); String quality2 = br2.readLine();
+                    int length1 = reads1.length(); 
+                    int length2 = reads2.length();
+                    bw1.write(cnt + "\t" + length1); bw1.newLine();
+                    bw2.write(cnt + "\t" + length2); bw2.newLine();
+                }
+                bw1.flush();bw1.close();br1.close();
+                bw2.flush();bw2.close();br2.close();   
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    
+    
+    
+    public void sampleFastq () {
+        String infileDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/P18Z12200N0030_WHEsikR/Clean/WHYD18111796_A/";
+        String outputDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/001_sampleFq/";
+        String outputFastaDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/002_sampleFasta/";
+        int readNum = 100000; //抽取10万条reads
+        int startPoint = 100000; //从第10万条后开始抽样
+        int fastaNum = 1000; //抽取1000条fasta序列
+        File[] fs = new File(infileDirS).listFiles();
+        fs = IOUtils.listFilesEndsWith(fs, "_1.fq.gz");
+        HashSet<String> nameSet = new HashSet();
+        for (int i = 0; i < fs.length; i++) {
+            if (fs[i].isHidden()) continue;
+            nameSet.add(fs[i].getName().split("_1")[0]);
+        }
+        nameSet.parallelStream().forEach(name -> {
+            String infile1 = new File (infileDirS, name+"_1.fq.gz").getAbsolutePath();
+            String infile2 = new File (infileDirS, name+"_2.fq.gz").getAbsolutePath();
+            String outfile1 = new File (outputDirS, name+"_1.fq.gz").getAbsolutePath();
+            String outfile2 = new File (outputDirS, name+"_2.fq.gz").getAbsolutePath();
+            String outfileFasta = new File (outputFastaDirS, name+"_1.fa").getAbsolutePath();
+            try {
+                BufferedReader br1 = IOUtils.getTextGzipReader(infile1);
+                BufferedReader br2 = IOUtils.getTextGzipReader(infile2);
+                BufferedWriter bw1 = IOUtils.getTextGzipWriter(outfile1);
+                BufferedWriter bw2 = IOUtils.getTextGzipWriter(outfile2);
+                BufferedWriter bwf = IOUtils.getTextGzipWriter(outfileFasta);
+                String temp = null;
+                int cnt = 0;
+                while ((temp = br1.readLine()) != null) {
+                    cnt++;
+                    if (cnt < startPoint) {
+                        br1.readLine();br1.readLine();br1.readLine();
+                        br2.readLine();br2.readLine();br2.readLine();br2.readLine();
+                    }
+                    else {
+                        bw1.write(temp+"\n");bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");
+                        bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");
+                        for (int i = 0; i < readNum-1; i++) {
+                            bw1.write(br1.readLine()+"\n");
+                            temp = br1.readLine();bw1.write(temp+"\n");
+                            bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");
+                            bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");
+                            if (i > fastaNum) continue;
+                            bwf.write(">"+String.valueOf(i));
+                            bwf.newLine();
+                            bwf.write(temp);
+                            bwf.newLine();
+                        }
+                        bw1.flush();bw1.close();
+                        bw2.flush();bw2.close();
+                        bwf.flush();bwf.close();
+                        br1.close();
+                        br2.close();
+                        break;
+                    }
+                }
+                System.out.println(String.valueOf(readNum) + " reads are sampled from"+ name);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
     }
     
     /**
@@ -443,6 +638,61 @@ public class WheatBWA {
             System.out.println(e.toString());
             System.exit(1);
         }
+    }
+    
+        public void sampleData(){
+        String infile1S = "/data2/sharedData/Jiao/ABD/HRV-L1_1.fq.gz";
+        String infile2S = "/data2/sharedData/Jiao/ABD/HRV-L1_2.fq.gz";
+        String outfile1S = "/data2/aoyue/test/HRV-L1_test_1.fq.gz";
+        String outfile2S = "/data2/aoyue/test/HRV-L1_test_2.fq.gz";
+        String fastaS = "/data2/aoyue/HRV-L1_fasta_1.fa";
+        
+        int readNum = 100000;
+        int startPoint = 100000;
+        int fastaNum = 1000;
+        try{
+            BufferedReader br1 = IOUtils.getTextGzipReader(infile1S);
+            BufferedReader br2 = IOUtils.getTextGzipReader(infile2S);
+            BufferedWriter bw1 = IOUtils.getTextGzipWriter(outfile1S);
+            BufferedWriter bw2 = IOUtils.getTextGzipWriter(outfile2S);
+            BufferedWriter bwf = IOUtils.getTextGzipWriter(fastaS);
+            String temp = null;
+            int cnt = 0;
+            while((temp = br1.readLine()) != null){
+                cnt++;
+                if(cnt < startPoint){
+                    br1.readLine();br1.readLine();br1.readLine();
+                    br2.readLine();br2.readLine();br2.readLine();br2.readLine();
+                }
+                else{
+                    bw1.write(temp+"\n");bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");
+                    bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");
+                    for (int i = 0; i < readNum-1; i++) {
+                            bw1.write(br1.readLine()+"\n");
+                            temp = br1.readLine();bw1.write(temp+"\n");
+                            bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");
+                            bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");
+                            if (i > fastaNum) continue;
+                            bwf.write(">"+String.valueOf(i));
+                            bwf.newLine();
+                            bwf.write(temp);
+                            bwf.newLine();
+                        }
+                        bw1.flush();bw1.close();
+                        bw2.flush();bw2.close();
+                        bwf.flush();bwf.close();
+                        br1.close();
+                        br2.close();
+                        break;
+                }
+            }
+            System.out.println(String.valueOf(readNum) + " reads are sampled from"+ "HRV-L1");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.out.println("。。。。。。。");
     }
     
     private void checkMd5() {
