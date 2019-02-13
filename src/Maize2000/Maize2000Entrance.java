@@ -22,8 +22,8 @@ import utils.PStringUtils;
  *
  * @author Aoyue
  */
-public class Maize2000Entraince {
-    public Maize2000Entraince(){
+public class Maize2000Entrance {
+    public Maize2000Entrance(){
         this.otherClass();
         //this.mergeCountVariantFile();
        // this.crossMapConvert();
@@ -92,7 +92,7 @@ public class Maize2000Entraince {
     }
     public static void main (String[] args) throws IOException{
         System.out.println("hello");
-        new Maize2000Entraince();
+        new Maize2000Entrance();
      
         
        

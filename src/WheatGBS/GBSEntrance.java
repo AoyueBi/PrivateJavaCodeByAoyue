@@ -11,8 +11,8 @@ import java.io.IOException;
  *
  * @author Aoyue
  */
-public class GBSEntraince {
-    public GBSEntraince() throws IOException{
+public class GBSEntrance {
+    public GBSEntrance() throws IOException{
         //this.PlateAndID();
         this.DataProcessor();
         
@@ -27,7 +27,7 @@ public class GBSEntraince {
         //new GBScp();
     }
     public static void main (String[] args) throws IOException{
-        new GBSEntraince();
+        new GBSEntrance();
         
     }  
     
