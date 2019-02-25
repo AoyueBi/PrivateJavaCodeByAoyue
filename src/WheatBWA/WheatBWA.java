@@ -30,9 +30,9 @@ import utils.PStringUtils;
  */
 public class WheatBWA {
     public WheatBWA(){
-        //this.mkMd5();
-        //this.checkMd5();
-        this.sampleData();
+        this.mkMd5();
+        this.checkMd5();
+        //this.sampleData();
         //this.fastQC();
         //this.alignBWA();
         //this.listSpecificalFiles();
@@ -42,8 +42,8 @@ public class WheatBWA {
         this.pipeline();
         //this.sampleFastq();
         //this.testString();
-        //this.statReadLength();
-        //this.statScore();
+        this.statReadLength();
+        this.statScore();
         
     }
     
