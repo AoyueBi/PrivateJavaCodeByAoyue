@@ -109,10 +109,10 @@ public class FastCallSNP {
         new File(vcfDirS).mkdir(); //创建文件夹vcfDirS
         this.getTaxaBamMap(taxaBamMapFileS); //使用getTaxaBamMap得到一个什么样的结果？taxa的数目，bam文件的数目，每个taxa对应多少个bam文件的HashMap
         File[] bams = new File(bamDirS).listFiles();
-        Arrays.sort(bams);
-        this.updateTaxaBamPathMap(bams);
-        this.creatPileupMap(pileupDirS);
-        this.creatFactorialMap();
+        Arrays.sort(bams); //将bam文件进行排序， bams是一个File类型的数组
+        this.updateTaxaBamPathMap(bams); //对taxa-bam文件进行更新
+        this.creatPileupMap(pileupDirS); //使一个bam文件对应一个pileup文件
+        this.creatFactorialMap(); //创建一个i  factorial(i) 的因子图谱
         this.callSNPByChromosome(currentChr, referenceFileS, vcfDirS);
         System.out.println("Variant calling completed");
     }
@@ -124,19 +124,19 @@ public class FastCallSNP {
         int regionEnd = chrSeq.length();
         this.performPileup(currentChr, regionStart, regionEnd, referenceFileS);
         String outfileS = "chr"+FStringUtils.getNDigitNumber(3, currentChr)+".VCF.txt";
-        outfileS = new File (vcfDirS, outfileS).getAbsolutePath();
-        int[][] binBound = this.creatBins(currentChr, binSize, regionStart, regionEnd);
+        outfileS = new File (vcfDirS, outfileS).getAbsolutePath(); //VCF输出文件的路径
+        int[][] binBound = this.creatBins(currentChr, binSize, regionStart, regionEnd); //建立二维数组的bin， binsize是10万；该条染色体的起始位置信息由上文得知。
         try {
-            HashMap<String, BufferedReader> bamPathPileupReaderMap = this.getBamPathPileupReaderMap();
-            ConcurrentHashMap<BufferedReader, List<String>> readerRemainderMap = this.getReaderRemainderMap(bamPathPileupReaderMap);
-            BufferedWriter bw = IoUtils.getTextWriter(outfileS);
-            bw.write(this.getAnnotation(referenceFileS));
-            bw.write(this.getVCFHeader());
+            HashMap<String, BufferedReader> bamPathPileupReaderMap = this.getBamPathPileupReaderMap(); //建立一个HashMap，目的是将一个bam文件对应一个pileup结果的字符缓冲流
+            ConcurrentHashMap<BufferedReader, List<String>> readerRemainderMap = this.getReaderRemainderMap(bamPathPileupReaderMap); //通过entryset取出所有value,放入一个空的list中
+            BufferedWriter bw = IoUtils.getTextWriter(outfileS); //一个bam文件，写出一个，接下来先写注释信息
+            bw.write(this.getAnnotation(referenceFileS)); //注释文件里有换行符
+            bw.write(this.getVCFHeader()); //VCF文件的#行
             bw.newLine();
             for (int i = 0; i < binBound.length; i++) {
                 long startTimePoint = System.nanoTime();
                 int binStart = binBound[i][0];
-                int binEnd = binBound[i][1];
+                int binEnd = binBound[i][1]; //指一个区间，被分成10万bp。是为了将BamPlieup的结果按照每10万个bp来进行一一处理，即10kb，因为？？？？？？？？？？？？？？？？
                 ConcurrentHashMap<String, List<List<String>>> bamPileupResultMap = this.getBamPileupResultMap(currentChr, binStart, binEnd, bamPathPileupReaderMap, readerRemainderMap);
                 StringBuilder[][] baseSb = this.getPopulateBaseBuilder(binStart, binEnd);
                 int[][] depth = this.getPopulatedDepthArray(binStart, binEnd);
@@ -502,13 +502,13 @@ public class FastCallSNP {
             BufferedReader br = bamPathPileupReaderMap.get(bamFileS);
             List<String> remainder = readerRemainderMap.get(br);
             boolean flag = false;
-            if (remainder.size() == 0) {
+            if (remainder.size() == 0) { //一开始，remainder是空的，所以size是0.
                 String temp = null;
                 try {
-                    temp = br.readLine();
+                    temp = br.readLine(); //只读第一行，
                 }
                 catch (Exception e) {}
-                if (temp != null) {
+                if (temp != null) { //对第一行进行拆分，取其位置，和binEnd进行比较，如果大于binEnd，说明不在此区间，将br放入split，否则就将split这一行内容加入lineList
                     List<String> split = FStringUtils.fastSplit(temp, "\t");
                     int currentPos = Integer.valueOf(split.get(1));
                     if (currentPos > binEnd) {
@@ -521,7 +521,7 @@ public class FastCallSNP {
                 }
             }
             else {
-                int currentPos = Integer.valueOf(remainder.get(1));
+                int currentPos = Integer.valueOf(remainder.get(1)); //
                 if (currentPos <= binEnd) {
                     lineList.add(remainder);
                     flag = true;
@@ -560,20 +560,20 @@ public class FastCallSNP {
     private ConcurrentHashMap<BufferedReader, List<String>> getReaderRemainderMap (HashMap<String, BufferedReader> bamPathPileupReaderMap) {
         ArrayList<String> empty = new ArrayList();
         ConcurrentHashMap<BufferedReader, List<String>> readerRemainderMap = new ConcurrentHashMap();
-        Set<Map.Entry<String, BufferedReader>> enties = bamPathPileupReaderMap.entrySet();
+        Set<Map.Entry<String, BufferedReader>> enties = bamPathPileupReaderMap.entrySet(); //通过entrySet()方法将map集合中的映射关系取出（这个关系就是Map.Entry类型）
         enties.stream().forEach(e -> {
             readerRemainderMap.put(e.getValue(), empty);
         });
         return readerRemainderMap;
     }
     
-    private HashMap<String, BufferedReader> getBamPathPileupReaderMap () {
+    private HashMap<String, BufferedReader> getBamPathPileupReaderMap () { //目的是将一个bam文件对应一个pileup结果的字符缓冲流
         HashMap<String, BufferedReader> bamPathPileupReaderMap = new HashMap();
         try {
             for (int i = 0; i < this.bamPaths.length; i++) {
                 String pileupFileS = this.bamPathPileupPathMap.get(bamPaths[i]);
                 File pileupF = new File(pileupFileS);
-                if (!pileupF.exists()) {
+                if (!pileupF.exists()) { //如果pileup文件不存在，则过滤。
                     BufferedReader br = new BufferedReader(new StringReader(""), 1024);
                     bamPathPileupReaderMap.put(bamPaths[i], br);
                     continue;
@@ -592,11 +592,12 @@ public class FastCallSNP {
         System.out.println("Pileup is being performed on chromosome "+String.valueOf(currentChr)+" from "+String.valueOf(startPos)+" to "+String.valueOf(endPos));
         long timeStart = System.nanoTime();
         List<String> bamList = Arrays.asList(bamPaths);
-        LongAdder counter = new LongAdder();
+        LongAdder counter = new LongAdder(); //如果程序内有高度的竞争，大量的线程访问同一个原子值，可以使用 LongAdder 和 LongAccumulator，这个类是 Java 8 提供用于在高度竞争环境下替代 AtomicLong 的。
         bamList.parallelStream().forEach(bamFileS -> {
             String pileupFileS = this.bamPathPileupPathMap.get(bamFileS);
             StringBuilder sb = new StringBuilder();
-            sb.append("samtools mpileup -A -B -q 30 -Q 10 -f ").append(referenceFileS).append(" ").append(bamFileS).append(" -r ");
+            sb.append("samtools mpileup -A -B -q 30 -Q 10 -f ").append(referenceFileS).append(" ").append(bamFileS).append(" -r "); //-r区域
+            //-A能够帮助我们不跳过哪些异常的read pairs; -B帮助我们降低由错配引起的假阳性SNPs; -q 限定最小比对质量为30; -Q限定最小碱基质量为10;-f为参考基因组的fa格式或bgzip压缩过且带有fai文件
             sb.append(currentChr).append(":").append(startPos).append("-").append(endPos).append(" -o ").append(pileupFileS);
             String command = sb.toString();
             try {
@@ -708,7 +709,7 @@ public class FastCallSNP {
         return likelihood;
     }
     
-    private void creatPileupMap (String pileupDirS) {
+    private void creatPileupMap (String pileupDirS) { //一个bam文件，对应一个pileup文件
         bamPathPileupPathMap = new HashMap();
         Set<Entry<String, String[]>> entries = taxaBamPathMap.entrySet();
         for (Entry<String, String[]> e : entries) {
@@ -721,32 +722,32 @@ public class FastCallSNP {
     }
       
     private void updateTaxaBamPathMap (File[] bams) {
-        String bamDirS = bams[0].getParent();
-        String[] existingBam = new String[bams.length];
-        for (int i = 0; i < bams.length; i++) existingBam[i] = bams[i].getName();
-        Arrays.sort(existingBam);
-        HashSet<String> existingTaxaSet = new HashSet();
-        HashMap<String, String[]> updatedTaxaBamMap = new HashMap();
+        String bamDirS = bams[0].getParent(); //存放真实bam文件的路径
+        String[] existingBam = new String[bams.length]; //真实文件中bam的个数
+        for (int i = 0; i < bams.length; i++) existingBam[i] = bams[i].getName(); //遍历真实bam文件，返回的是真实bam文件的名字
+        Arrays.sort(existingBam); //对真实bam文件进行排序
+        HashSet<String> existingTaxaSet = new HashSet(); //********先建立一个existingTaxaSet集合，这个集合是空的，以后用来存放现存的taxa？？？
+        HashMap<String, String[]> updatedTaxaBamMap = new HashMap(); //**建立更新后的updatedTaxaBamMap HashMap，用于一个taxa对应多个bam文件
         int cnt = 0;
-        ArrayList<String> pathList = new ArrayList();
-        for (int i = 0; i < taxaNames.length; i++) {
-            String[] bamNames = taxaBamPathMap.get(taxaNames[i]);
-            ArrayList<String> bamPathList = new ArrayList();
-            for (int j = 0; j < bamNames.length; j++) {
-                int index = Arrays.binarySearch(existingBam, bamNames[j]);
-                if (index < 0) continue;
-                String path = new File(bamDirS,bamNames[j]).getAbsolutePath();
-                bamPathList.add(path);
-                pathList.add(path);
-                existingTaxaSet.add(taxaNames[i]);
+        ArrayList<String> pathList = new ArrayList();  //*********建立一个pathList，用来存放真实bam文件的全路径集合。
+        for (int i = 0; i < taxaNames.length; i++) {   //对一直文件列表中的taxa名字进行循环，根据taxa名字，找到对应的bam列表。
+            String[] bamNames = taxaBamPathMap.get(taxaNames[i]); //bamNames用来存放taxa对应的原本计划中的bam文件集合
+            ArrayList<String> bamPathList = new ArrayList(); //*********建立一个bamPathList集合，用来存放？？？？？？？
+            for (int j = 0; j < bamNames.length; j++) { //在每个taxa下循环，找到bam集合后，再进行bam的循环。
+                int index = Arrays.binarySearch(existingBam, bamNames[j]);  //库为真实bam文件的个数，bamNames[j]为参数列表里的bam文件。
+                if (index < 0) continue; //去掉列表里存在，但在真实库里不存在的bam；
+                String path = new File(bamDirS,bamNames[j]).getAbsolutePath(); //真实bam的路径
+                bamPathList.add(path); //存放真实bam的路径名
+                pathList.add(path); //存放真实bam的路径名
+                existingTaxaSet.add(taxaNames[i]); //存放taxa的集合，这里的意思是，必须有真实bam文件存在，这个taxa才是真实存在的，若真实bam文件没有，则列表里的taxa也不会加入到集合中去。
             }
-            if (bamPathList.isEmpty()) continue;
-            bamNames = bamPathList.toArray(new String[bamPathList.size()]);
+            if (bamPathList.isEmpty()) continue; //如果taxa对于的bam文件为空，则略去这个taxa
+            bamNames = bamPathList.toArray(new String[bamPathList.size()]); //此时bamNames存放的是真实bam文件的带路径的文件名
             Arrays.sort(bamNames);
-            updatedTaxaBamMap.put(taxaNames[i], bamNames);
+            updatedTaxaBamMap.put(taxaNames[i], bamNames); //此时的HashMap对应的是 一个taxa,一群带bam路径名的数组
             cnt+=bamNames.length;
         }
-        String[] updatedTaxaNames = existingTaxaSet.toArray(new String[existingTaxaSet.size()]);
+        String[] updatedTaxaNames = existingTaxaSet.toArray(new String[existingTaxaSet.size()]); //有bam文件的taxa集合
         Arrays.sort(updatedTaxaNames);
         taxaNames = updatedTaxaNames;
         taxaBamPathMap = updatedTaxaBamMap;
@@ -903,6 +904,7 @@ public class FastCallSNP {
 //************************************************************************************************************  
     
     public static void main (String[] args) {
+        System.out.println("This is the entrance of FastCall");
         new FastCallSNP (args[0]);
         //new FastCallSNP (); //for test
     }

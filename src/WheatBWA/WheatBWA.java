@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,20 +31,120 @@ import utils.PStringUtils;
  */
 public class WheatBWA {
     public WheatBWA(){
-        this.mkMd5();
-        this.checkMd5();
-        //this.sampleData();
-        //this.fastQC();
-        //this.alignBWA();
-        //this.listSpecificalFiles();
-        //this.testspilt();
-        //this.samtoolsSort();
-        //this.samtoolsMerge();
-        this.pipeline();
-        //this.sampleFastq();
-        //this.testString();
-        this.statReadLength();
-        this.statScore();
+//        this.mkMd5();
+//        this.checkMd5();
+//        this.sampleData(); //单线程单个抽样
+//        this.sampleFastq(); //多线程多个抽样
+//        this.fastQC();
+//        this.alignBWA();
+//        this.listSpecificalFiles();
+//        this.samtoolsSort();
+//        this.samtoolsMerge();
+//        this.pipeline();
+//        this.statReadLength();
+//        this.statScore();
+        this.sampleBamfile();
+        
+        
+    }
+    
+    /*
+    本方法的目的是，对一个文件夹内的bam文件进行抽样,多线程运行。
+    1.给出一个table,按照t里的taxa名字进行抽样；
+    2.给出一个文件夹，把文件夹内所有的bam文件进行抽样。
+    3.给出一个String taxa字符，对一个文件进行抽样。
+    */
+    public void sampleBamfile(){
+        
+        String outfileDirs = "/data2/aoyue/fastCall_project/bam/";
+        String infileDirS = "/data2/sharedData/wheat_Jiao/splitBamfile/001/";
+        String scriptDirS = "/data2/aoyue/fastCall_project/";
+        
+        /********************** 根据表格进行抽样 **********************************/
+        String tfileS = "/data2/aoyue/fastCall_project/taxaFastCalltest.t.txt";
+        RowTable<String> t = new RowTable<>(tfileS);
+        List<String> namelist = t.getColumn(0);
+        Collections.sort(namelist);
+        
+        /********************** 根据文件夹进行抽样 **********************************/
+//        File[] fs = new File(infileDirS).listFiles();
+//        fs = IOUtils.listFilesEndsWith(fs, ".bam");
+//        List<String> namelist = new ArrayList<>();
+//        for(int i=0; i<fs.length; i++){
+//            String name = fs[i].getName().split(".chr")[0];
+//            namelist.add(name);
+//        }
+//        Collections.sort(namelist);
+        
+        /********************** 根据字符串进行抽样 **********************************/
+//        String name = "AFG-L1";
+//        List<String> namelist = new ArrayList<>();
+//        namelist.add(name);
+        
+        /********************** 抽样1：run java包直接进行抽样 **********************************/
+        namelist.parallelStream().forEach(taxa ->{
+            //写命令脚本
+            String infileS = new File(infileDirS, taxa + ".chr001.bam").getAbsolutePath();
+            String outfileS = new File (outfileDirs,taxa + ".chr001.test.bam").getAbsolutePath();
+            StringBuilder sb = new StringBuilder("samtools view -h ");
+            sb.append(infileS).append(" 1:10000-150000 -o ").append(outfileS).append(" \nsamtools index ").append(outfileS);
+            String cmd = sb.toString();
+            try{
+                //写脚本到文件中--将命令写入指定的脚本文件中
+                String scriptS = new File(scriptDirS,taxa + ".sh").getAbsolutePath();
+                BufferedWriter bw = IOUtils.getTextWriter(scriptS);
+                bw.write(cmd);
+                bw.newLine();
+                bw.flush();bw.close();
+                //调用系统命令 - 新建一个缓冲，用于运行脚本
+                sb = new StringBuilder("sh ");
+                sb.append(scriptS);
+                Runtime run = Runtime.getRuntime();
+                Process p = run.exec(sb.toString());
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                //BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                StringBuilder ssb = new StringBuilder(); //有时候需要将屏幕信息输出到一个文件中，此时建立输出文本路径。
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                    ssb.append(line + "\n");
+                }
+                String result = ssb.toString(); //有必要时输出出来
+                p.waitFor();
+                System.out.println(sb.toString());
+                System.out.println("Sample Bamfile " + taxa + ".chr001.bam is finished.");
+                new File (scriptS).delete();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+        });
+        
+        
+        /********************** 抽样2：所有信息写到一个脚本，上传脚本文件，执行 **********************************/
+//        for(int i =0; i < namelist.size(); i++){ //一共有60个循环
+//            String bamName = namelist.get(i);
+//            //String scriptS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/Jiao/002_script/First1-60/splitbam/" + bamName + "_split.sh";
+//            String scriptS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/Jiao/002_script/Second1-60/splitbam/" + bamName + "_split.sh";
+//            //samtools view -h mergeWheat24SM.bam 44 -o mergeWheat24SM.chr44.bam
+//            try{
+//                String inputDirS = "/data2/aoyue/output/bamfile/";
+//                BufferedWriter bw = IOUtils.getTextWriter(scriptS);
+//                for(int j=0; j<45;j++){
+//                    String chr = PStringUtils.getNDigitNumber(3, j);
+//                    String outputDirS = "/data2/aoyue/output/splitBamfile/" + chr + "/";
+//                    bw.write("samtools view -h " + inputDirS + bamName + ".rmdup.bam " + j +" -o " + outputDirS + bamName + ".chr" + chr +".bam && samtools index " + 
+//                            outputDirS + bamName + ".chr" + chr + ".bam");
+//                    bw.newLine();
+//                }
+//                bw.flush();bw.close();
+//            }
+//            catch(Exception e){
+//                e.printStackTrace();
+//                System.exit(1);
+//            }
+//        }
         
     }
     
@@ -171,70 +272,7 @@ public class WheatBWA {
     
     
     
-    public void sampleFastq () {
-        String infileDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/P18Z12200N0030_WHEsikR/Clean/WHYD18111796_A/";
-        String outputDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/001_sampleFq/";
-        String outputFastaDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/002_sampleFasta/";
-        int readNum = 100000; //抽取10万条reads
-        int startPoint = 100000; //从第10万条后开始抽样
-        int fastaNum = 1000; //抽取1000条fasta序列
-        File[] fs = new File(infileDirS).listFiles();
-        fs = IOUtils.listFilesEndsWith(fs, "_1.fq.gz");
-        HashSet<String> nameSet = new HashSet();
-        for (int i = 0; i < fs.length; i++) {
-            if (fs[i].isHidden()) continue;
-            nameSet.add(fs[i].getName().split("_1")[0]);
-        }
-        nameSet.parallelStream().forEach(name -> {
-            String infile1 = new File (infileDirS, name+"_1.fq.gz").getAbsolutePath();
-            String infile2 = new File (infileDirS, name+"_2.fq.gz").getAbsolutePath();
-            String outfile1 = new File (outputDirS, name+"_1.fq.gz").getAbsolutePath();
-            String outfile2 = new File (outputDirS, name+"_2.fq.gz").getAbsolutePath();
-            String outfileFasta = new File (outputFastaDirS, name+"_1.fa").getAbsolutePath();
-            try {
-                BufferedReader br1 = IOUtils.getTextGzipReader(infile1);
-                BufferedReader br2 = IOUtils.getTextGzipReader(infile2);
-                BufferedWriter bw1 = IOUtils.getTextGzipWriter(outfile1);
-                BufferedWriter bw2 = IOUtils.getTextGzipWriter(outfile2);
-                BufferedWriter bwf = IOUtils.getTextGzipWriter(outfileFasta);
-                String temp = null;
-                int cnt = 0;
-                while ((temp = br1.readLine()) != null) {
-                    cnt++;
-                    if (cnt < startPoint) {
-                        br1.readLine();br1.readLine();br1.readLine();
-                        br2.readLine();br2.readLine();br2.readLine();br2.readLine();
-                    }
-                    else {
-                        bw1.write(temp+"\n");bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");
-                        bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");
-                        for (int i = 0; i < readNum-1; i++) {
-                            bw1.write(br1.readLine()+"\n");
-                            temp = br1.readLine();bw1.write(temp+"\n");
-                            bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");
-                            bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");
-                            if (i > fastaNum) continue;
-                            bwf.write(">"+String.valueOf(i));
-                            bwf.newLine();
-                            bwf.write(temp);
-                            bwf.newLine();
-                        }
-                        bw1.flush();bw1.close();
-                        bw2.flush();bw2.close();
-                        bwf.flush();bwf.close();
-                        br1.close();
-                        br2.close();
-                        break;
-                    }
-                }
-                System.out.println(String.valueOf(readNum) + " reads are sampled from"+ name);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        });
-    }
+    
     
     /**
      * 本程序适合于一个样品的深测序质控；每个脚本单独运行完毕后，开始运行下一个脚本。
@@ -640,6 +678,74 @@ public class WheatBWA {
         }
     }
     
+    public void sampleFastq () {
+        String infileDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/P18Z12200N0030_WHEsikR/Clean/WHYD18111796_A/";
+        String outputDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/001_sampleFq/";
+        String outputFastaDirS = "/Users/Aoyue/Documents/Data/project/wheatVMapII/SampleOne20181224/data/002_sampleFasta/";
+        int readNum = 100000; //抽取10万条reads
+        int startPoint = 100000; //从第10万条后开始抽样
+        int fastaNum = 1000; //抽取1000条fasta序列
+        File[] fs = new File(infileDirS).listFiles();
+        fs = IOUtils.listFilesEndsWith(fs, "_1.fq.gz");
+        HashSet<String> nameSet = new HashSet();
+        for (int i = 0; i < fs.length; i++) {
+            if (fs[i].isHidden()) continue;
+            nameSet.add(fs[i].getName().split("_1")[0]);
+        }
+        nameSet.parallelStream().forEach(name -> {
+            String infile1 = new File (infileDirS, name+"_1.fq.gz").getAbsolutePath();
+            String infile2 = new File (infileDirS, name+"_2.fq.gz").getAbsolutePath();
+            String outfile1 = new File (outputDirS, name+"_1.fq.gz").getAbsolutePath();
+            String outfile2 = new File (outputDirS, name+"_2.fq.gz").getAbsolutePath();
+            String outfileFasta = new File (outputFastaDirS, name+"_1.fa").getAbsolutePath();
+            try {
+                BufferedReader br1 = IOUtils.getTextGzipReader(infile1);
+                BufferedReader br2 = IOUtils.getTextGzipReader(infile2);
+                BufferedWriter bw1 = IOUtils.getTextGzipWriter(outfile1);
+                BufferedWriter bw2 = IOUtils.getTextGzipWriter(outfile2);
+                BufferedWriter bwf = IOUtils.getTextGzipWriter(outfileFasta);
+                String temp = null;
+                int cnt = 0;
+                while ((temp = br1.readLine()) != null) {
+                    cnt++;
+                    if (cnt < startPoint) {
+                        br1.readLine();br1.readLine();br1.readLine();
+                        br2.readLine();br2.readLine();br2.readLine();br2.readLine();
+                    }
+                    else {
+                        bw1.write(temp+"\n");bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");
+                        bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");
+                        for (int i = 0; i < readNum-1; i++) {
+                            bw1.write(br1.readLine()+"\n");
+                            temp = br1.readLine();bw1.write(temp+"\n");
+                            bw1.write(br1.readLine()+"\n");bw1.write(br1.readLine()+"\n");
+                            bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");bw2.write(br2.readLine()+"\n");
+                            if (i > fastaNum) continue;
+                            bwf.write(">"+String.valueOf(i));
+                            bwf.newLine();
+                            bwf.write(temp);
+                            bwf.newLine();
+                        }
+                        bw1.flush();bw1.close();
+                        bw2.flush();bw2.close();
+                        bwf.flush();bwf.close();
+                        br1.close();
+                        br2.close();
+                        break;
+                    }
+                }
+                System.out.println(String.valueOf(readNum) + " reads are sampled from"+ name);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+    }
+    
+    /*
+    本方法适用于单个样品的抽样，不适合多线程抽样。
+    */
         public void sampleData(){
         String infile1S = "/data2/sharedData/Jiao/ABD/HRV-L1_1.fq.gz";
         String infile2S = "/data2/sharedData/Jiao/ABD/HRV-L1_2.fq.gz";
@@ -793,8 +899,8 @@ public class WheatBWA {
     
     
     public static void main (String[] args){
-        //new WheatBWA();
-        new ProcessVCF();
+        new WheatBWA();
+        //new ProcessVCF();
         System.out.println("\n**********************************" );
         System.out.println("Here is the main class of WheatBWA" );
         

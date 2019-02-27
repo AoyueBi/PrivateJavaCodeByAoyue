@@ -102,7 +102,7 @@ public class DataProcessor {
             Process p = run.exec(cmd);           
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             StringBuilder ssb = new StringBuilder();
-            String line;
+            String line = null;
             while ((line = br.readLine()) != null) {
             ssb.append(line).append("\n");
             }
