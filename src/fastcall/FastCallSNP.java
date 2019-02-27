@@ -629,7 +629,7 @@ public class FastCallSNP {
     
     private String getVCFHeader () {
         StringBuilder sb = new StringBuilder();
-        sb.append("#CHR\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT");
+        sb.append("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT");
         for (int i = 0; i < taxaNames.length; i++) {
             sb.append("\t").append(taxaNames[i]);
         }
@@ -858,11 +858,14 @@ public class FastCallSNP {
         sb.append("##fileDate=").append(S.split(" ")[0]).append("\n");
         sb.append("##reference=").append(referenceFileS).append("\n");
         sb.append("##INFO=<ID=DP,Number=1,Type=Integer,Description=\"").append("Total depth").append("\">\n");
-        sb.append("##INFO=<ID=AD,Number=2+,Type=Integer,Description=\"").append("Allele depth").append("\">\n");
+        sb.append("##INFO=<ID=AD,Number=.,Type=Integer,Description=\"").append("Total allelelic depths in order listed starting with REF").append("\">\n");
         sb.append("##INFO=<ID=NZ,Number=1,Type=Integer,Description=\"").append("Number of individuals with alleles present").append("\">\n");
         sb.append("##INFO=<ID=AP,Number=2+,Type=Integer,Description=\"").append("Number of individuals in which an allele is present").append("\">\n");
         sb.append("##INFO=<ID=PV,Number=1+,Type=Float,Description=\"").append("Segreagation test P-Value of alternative alleles").append("\">\n");
         sb.append("##INFO=<ID=DI,Number=2,Type=Integer,Description=\"").append("Number of deletion and insertion type").append("\">\n");
+        sb.append("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"").append("Genotype").append("\">\n");
+        sb.append("##FORMAT=<ID=AD,Number=.,Type=Integer,Description=\"").append("Allelic depths for the reference and alternate alleles in the order listed").append("\">\n");
+        sb.append("##FORMAT=<ID=PL,Number=G,Type=Integer,Description=\"").append("Genotype likelihoods for 0/0, 0/1, 1/1, or  0/0, 0/1, 0/2, 1/1, 1/2, 2/2 if 2 alt alleles").append("\">\n");
         return sb.toString();
     }
     
