@@ -32,6 +32,7 @@ import org.apache.commons.math3.stat.inference.ChiSquareTest;
 /**
  *
  * @author Fei Lu
+ * edited by Aoyue Bi
  */
 public class FastCallSNP {
     int[] chroms = null;
@@ -865,7 +866,7 @@ public class FastCallSNP {
         sb.append("##INFO=<ID=DI,Number=2,Type=Integer,Description=\"").append("Number of deletion and insertion type").append("\">\n");
         sb.append("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"").append("Genotype").append("\">\n");
         sb.append("##FORMAT=<ID=AD,Number=.,Type=Integer,Description=\"").append("Allelic depths for the reference and alternate alleles in the order listed").append("\">\n");
-        sb.append("##FORMAT=<ID=PL,Number=G,Type=Integer,Description=\"").append("Genotype likelihoods for 0/0, 0/1, 1/1, or  0/0, 0/1, 0/2, 1/1, 1/2, 2/2 if 2 alt alleles").append("\">\n");
+        sb.append("##FORMAT=<ID=GL,Number=.,Type=Integer,Description=\"").append("Genotype likelihoods for 0/0, 0/1, 1/1, or  0/0, 0/1, 0/2, 1/1, 1/2, 2/2 if 2 alt alleles").append("\">\n");
         return sb.toString();
     }
     

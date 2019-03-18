@@ -22,13 +22,13 @@ public class ProcessVCF {
     public ProcessVCF (){
         this.sampleVCFdataInOrder();
         this.sampleVCFdataRandom();
-        this.sampleVCFdataRandom2();
+        this.sampleVCFdataRandom2(); //该方法弃用
         
     }
     
     /**************** 根据库文件过滤后的位点数记录，在VCF文件中随机抽取以上记录的 int行，按顺序随机抽取**************/
     private void sampleVCFdataRandom2 () {
-        //思想：随机抽取1万个位点，进行每个taxa的每个位点的depth统计
+        //思想：随机抽取1万个位点
         /**hmpInfoFileS file
          * Chr	Pos	Ref	Alt	Ancestral(Gerp)	Major	Minor	MajorAlleleFrequency	MinorAlleleFrequency	SiteDepth	HetCount
             10	228730	A	T	NA	A	T	0.986692	0.013307985	3591	1
@@ -46,7 +46,7 @@ public class ProcessVCF {
             String temp = br.readLine();
             int cnt = 0; 
             while ((temp = br.readLine()) != null) {
-                cnt++;
+                cnt++; //第一行是2
             }
             snpNum = cnt;
             /*建立一个50000个 indices的整型数组， 赋值为indice[0]= */
@@ -84,7 +84,6 @@ public class ProcessVCF {
             BufferedWriter bw = IOUtils.getTextWriter(outfileS);
             String temp = null;
             while ((temp = br.readLine()) != null) {
-                //if(temp.startsWith("##")) continue;
                 if(temp.startsWith("#")) {
                     bw.write(br.readLine());
                     bw.newLine();
