@@ -38,7 +38,7 @@ public class FastqQualitycp {
         this.listSpecificalFiles();
         //this.covergage();
         //this.covergagePlot();
-        //this.sampleReads();
+        this.sampleReads();
         this.fastQC();
         //this.fastQCsummary();
         //this.contamination();

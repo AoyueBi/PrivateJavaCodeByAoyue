@@ -34,13 +34,13 @@ public class WheatBWA {
 //        this.mkMd5();
 //        this.checkMd5();
 //        this.sampleData(); //单线程单个抽样
-//        this.sampleFastq(); //多线程多个抽样
-//        this.fastQC();
+        this.sampleFastq(); //多线程多个抽样
+        this.fastQC();
 //        this.alignBWA();
 //        this.listSpecificalFiles();
 //        this.samtoolsSort();
 //        this.samtoolsMerge();
-//        this.pipeline();
+        this.pipeline();
 //        this.statReadLength();
 //        this.statScore();
         this.sampleBamfile();
@@ -899,8 +899,8 @@ public class WheatBWA {
     
     
     public static void main (String[] args){
-        new WheatBWA();
-        //new ProcessVCF();
+        //new WheatBWA();
+        new ProcessVCF();
         System.out.println("\n**********************************" );
         System.out.println("Here is the main class of WheatBWA" );
         

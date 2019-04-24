@@ -21,8 +21,8 @@ import utils.PStringUtils;
 public class ProcessVCF {
     public ProcessVCF (){
         this.sampleVCFdataInOrder();
-        this.sampleVCFdataRandom();
-        this.sampleVCFdataRandom2(); //该方法弃用
+        //this.sampleVCFdataRandom();
+        //this.sampleVCFdataRandom2(); //该方法弃用
         
     }
     
@@ -125,14 +125,14 @@ public class ProcessVCF {
     
     /**************** 按顺序抽取VCF文件的前 int=lines 行，按顺序抽取，并且包含元文件**************/
     public void sampleVCFdataInOrder(){
-        //String infileS = "/Users/Aoyue/Documents/maizeGeneticLoad/oriData/hmp321_agpv4_chr10.vcf.gz";
-        String infileS = "/Users/Aoyue/Documents/maizeGeneticLoad/oriData/singleChrom/chr1_5000.vcf.gz";
-        String outfileS = "/Users/Aoyue/Documents/maizeGeneticLoad/oriData/chr1_test.vcf";
+        String infileS = "/Users/Aoyue/project/maizeGeneticLoad/oriData/hmp321_agpv4_chr10.vcf.gz";
+        //String infileS = "/Users/Aoyue/Documents/maizeGeneticLoad/oriData/singleChrom/chr1_5000.vcf.gz";
+        String outfileS = "/Users/Aoyue/project/maizeGeneticLoad/oriData/hmp321_agpv4/hmp321_agpv4_chr10.vcf.gz";
         int lines = 1000;
         int cnt = 0;
         try{
             BufferedReader br = IOUtils.getTextGzipReader(infileS);
-            BufferedWriter bw = IOUtils.getTextWriter(outfileS);
+            BufferedWriter bw = IOUtils.getTextGzipWriter(outfileS);
             String temp = null;
             while((temp = br.readLine()) != null){
                 cnt++;
