@@ -26,11 +26,194 @@ public class VCFtools {
     
     public VCFtools(){
         //this.calSNPHeter();
-        this.calSNPMaf();
+        //this.calSNPMaf();
+        //this.calSNPHetMiss();
+        this.calSNPHetMissMaf();
         
     }
     public VCFtools(String infileDirS, String outfileDirS){
         //this.calIndiHeter(infileDirS,outfileDirS);
+    }
+    
+    public void calSNPHetMissMaf(){
+        String infileDirS = "/Users/Aoyue/project/wheatVMapII/005_preTest/fastCall/004_fastV2_JiaoDataParameters/003_testvcf/000_sampleVCF";
+        String outfileDirS = "/Users/Aoyue/project/wheatVMapII/005_preTest/fastCall/004_fastV2_JiaoDataParameters/003_testvcf/006_calHeterMissMaf";
+        File[] fs = new File(infileDirS).listFiles();
+        //fs = IOUtils.listFilesEndsWith(fs, ".vcf");
+        List<File> fsList = Arrays.asList(fs);
+        fsList.stream().forEach(f -> {
+            //开始处理文件，计时
+            long startTime = System.nanoTime();
+            Calendar cal = Calendar.getInstance();
+            int hour = cal.get(Calendar.HOUR_OF_DAY);
+            int minute = cal.get(Calendar.MINUTE);
+            int second = cal.get(Calendar.SECOND);
+            System.out.println("******************************************************" );
+            System.out.println(String.format("%d:%d:%d\t", hour, minute, second) + "Now starting to " + f.getName() + " heterozygote propotion;"); 
+            
+            try{
+                String infileS = f.getAbsolutePath();
+                String outfileS = new File(outfileDirS,f.getName().split(".vc")[0] + "_SNPheterMiss.txt").getAbsolutePath();
+               
+                BufferedReader br = null;
+                if (infileS.endsWith(".vcf")){
+                    br = IOUtils.getTextReader(infileS);
+                }
+                else if (infileS.endsWith(".vcf.gz")){
+                    br = IOUtils.getTextGzipReader(infileS);
+                }
+                BufferedWriter bw = IOUtils.getTextWriter(outfileS);
+                //bw.write("Chr\tPos\tHetPropotion\n");
+                bw.write("Chr\tPos\tHetNum\tHetPropotion\tMissingNum\tMissProportion\tMaf\n");
+                String temp;
+                String te[] = null;
+                while ((temp=br.readLine())!=null){
+                    int genoNum = 0;
+                    double homNum = 0; double hetNum = 0; double hetRate = 0;
+                    double missNum = 0; double missRate = 0;
+                    
+                    double refAlleleGametes = 0; double altAlleleGametes = 0; double refAF = 0; double altAF = 0; double maf = 0;
+                    //在一个位点内进行计算
+                    if(!temp.startsWith("#")){
+                        te = temp.split("\t");
+                        if(te[4].length() >1){
+                            continue;
+                        }
+                        for (int i = 9; i < te.length;i++){
+                            if(te[i].startsWith(".")) missNum++;
+                            if(!te[i].startsWith(".")){
+                                genoNum++; //have the genotype
+                                if(te[i].startsWith("0/1") || te[i].startsWith("1/0")) {
+                                    hetNum++; //the number of heterozygous
+                                    refAlleleGametes++; 
+                                    altAlleleGametes++; 
+                                }
+                                if(te[i].startsWith("0/0") ) {
+                                    homNum++; //the number of heterozygous
+                                    refAlleleGametes++;
+                                    refAlleleGametes++;
+                                }
+                                if(te[i].startsWith("1/1")){
+                                    homNum++;
+                                    altAlleleGametes++;
+                                    altAlleleGametes++;
+                                    
+                                }
+                            }
+                        }
+                        hetRate = hetNum/genoNum;
+                        missRate = missNum/(missNum + genoNum);
+                        refAF = refAlleleGametes/(refAlleleGametes+altAlleleGametes);
+                        altAF = altAlleleGametes/(refAlleleGametes+altAlleleGametes);;
+                        if(refAF >= altAF){
+                                maf = altAF;
+                        }else {
+                                maf = refAF;
+                        }
+                        //bw.write(te[0]+ "\t"+ te[1]+ "\t" + String.format("%.5f", hetRate) + "\n");
+                        bw.write(te[0]+ "\t"+ te[1]+ "\t" + String.format("%.0f", hetNum) + "\t"+ String.format("%.5f", hetRate)
+                                + "\t"+ String.format("%.0f", missNum)+ "\t"+ String.format("%.5f", missRate)+ "\t"+ String.format("%.5f", maf) + "\n");
+                    }
+                }
+                br.close();bw.flush();bw.close();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            
+            //文件处理完毕，计时
+                hour = cal.get(Calendar.HOUR_OF_DAY);
+                minute = cal.get(Calendar.MINUTE);
+                second = cal.get(Calendar.SECOND);
+                long endTime = System.nanoTime();
+                float excTime = (float) (endTime - startTime) / 1000000000;
+                //System.out.println("******************************************************" );
+                //System.out.println(String.format("%d:%d:%d\t", hour, minute, second) + f.getName() + " is finished!!!");
+                System.out.println("Execution time: " + String.format("%.2f", excTime) + "s");
+        });
+        
+    }
+    
+    public void calSNPHetMiss(){
+        String infileDirS = "/Users/Aoyue/project/wheatVMapII/005_preTest/fastCall/004_fastV2_JiaoDataParameters/003_testvcf/000_sampleVCF";
+        String outfileDirS = "/Users/Aoyue/project/wheatVMapII/005_preTest/fastCall/004_fastV2_JiaoDataParameters/003_testvcf/005_calHeterMiss";
+        File[] fs = new File(infileDirS).listFiles();
+        //fs = IOUtils.listFilesEndsWith(fs, ".vcf");
+        List<File> fsList = Arrays.asList(fs);
+        fsList.stream().forEach(f -> {
+            //开始处理文件，计时
+            long startTime = System.nanoTime();
+            Calendar cal = Calendar.getInstance();
+            int hour = cal.get(Calendar.HOUR_OF_DAY);
+            int minute = cal.get(Calendar.MINUTE);
+            int second = cal.get(Calendar.SECOND);
+            System.out.println("******************************************************" );
+            System.out.println(String.format("%d:%d:%d\t", hour, minute, second) + "Now starting to " + f.getName() + " heterozygote propotion;"); 
+            
+            try{
+                String infileS = f.getAbsolutePath();
+                String outfileS = new File(outfileDirS,f.getName().split(".vc")[0] + "_SNPheterMiss.txt").getAbsolutePath();
+               
+                BufferedReader br = null;
+                if (infileS.endsWith(".vcf")){
+                    br = IOUtils.getTextReader(infileS);
+                }
+                else if (infileS.endsWith(".vcf.gz")){
+                    br = IOUtils.getTextGzipReader(infileS);
+                }
+                BufferedWriter bw = IOUtils.getTextWriter(outfileS);
+                //bw.write("Chr\tPos\tHetPropotion\n");
+                bw.write("Chr\tPos\tHetNum\tHomNum\tHetPropotion\tMissingNum\tMissProportion\n");
+                String temp;
+                String te[] = null;
+                while ((temp=br.readLine())!=null){
+                    int genoNum = 0;
+                    double homNum = 0; double hetNum = 0; double hetRate = 0;
+                    double missNum = 0; double missRate = 0;
+                    //在一个位点内进行计算
+                    if(!temp.startsWith("#")){
+                        te = temp.split("\t");
+                        if(te[4].length() >1){
+                            continue;
+                        }
+                        for (int i = 9; i < te.length;i++){
+                            if(te[i].startsWith(".")) missNum++;
+                            if(!te[i].startsWith(".")){
+                                genoNum++; //have the genotype
+                                if(te[i].startsWith("0/1") || te[i].startsWith("1/0")) {
+                                    hetNum++; //the number of heterozygous
+                                }
+                                if(te[i].startsWith("0/0") || te[i].startsWith("1/1")) {
+                                    homNum++; //the number of heterozygous
+                                }
+                            }
+                        }
+                        hetRate = hetNum/genoNum;
+                        missRate = missNum/(missNum + genoNum);
+                        //bw.write(te[0]+ "\t"+ te[1]+ "\t" + String.format("%.5f", hetRate) + "\n");
+                        bw.write(te[0]+ "\t"+ te[1]+ "\t" + String.format("%.0f", hetNum)+ "\t"+ String.format("%.0f", homNum) + "\t"+ String.format("%.5f", hetRate)
+                                + "\t"+ String.format("%.0f", missNum)+ "\t"+ String.format("%.5f", missRate)+ "\n");
+                    }
+                }
+                br.close();bw.flush();bw.close();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            
+            //文件处理完毕，计时
+                hour = cal.get(Calendar.HOUR_OF_DAY);
+                minute = cal.get(Calendar.MINUTE);
+                second = cal.get(Calendar.SECOND);
+                long endTime = System.nanoTime();
+                float excTime = (float) (endTime - startTime) / 1000000000;
+                //System.out.println("******************************************************" );
+                //System.out.println(String.format("%d:%d:%d\t", hour, minute, second) + f.getName() + " is finished!!!");
+                System.out.println("Execution time: " + String.format("%.2f", excTime) + "s");
+        });
+        
     }
     
     public void calSNPMaf(){
