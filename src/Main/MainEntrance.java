@@ -5,6 +5,7 @@
  */
 package Main;
 
+import aoyue.utils.Monitor;
 import vcf.VCFtools;
 
 /**
@@ -19,10 +20,12 @@ public class MainEntrance {
         
     }
     
-    public static void main (String[] args){
+    public static void main (String[] args) throws InterruptedException{
         System.out.println("******************************************************" );
-        System.out.println("Here is the main class of Basic Genetics Analysis !" );
-        new MainEntrance();
+        System.out.println("Here is the main class of Basic Genetics Analysis !\n" );
+        
+        new Monitor().monitor();
+        //new MainEntrance();
         
     }
     

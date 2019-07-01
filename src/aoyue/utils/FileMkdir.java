@@ -24,11 +24,11 @@ public class FileMkdir {
     /**
      * 
      * @param ParentPath the path you want to mkdir
-     * @param a the number you want to buid the file path
+     * @param b the number you want to buid the file path
      */
-    public void mkdir(String ParentPath, int a){
+    public void mkdir(String ParentPath, int b){
         //String outfileDirS = "/Users/Aoyue/Documents";
-        for(int i =0 ; i < a; i++){
+        for(int i =0 ; i < b; i++){
             String filename = PStringUtils.getNDigitNumber(3, i);
             File f = new File(ParentPath, filename);
             f.mkdirs();

@@ -102,7 +102,6 @@ public class WheatBWA {
                 Runtime run = Runtime.getRuntime();
                 Process p = run.exec(sb.toString());
                 BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                //BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 StringBuilder ssb = new StringBuilder(); //有时候需要将屏幕信息输出到一个文件中，此时建立输出文本路径。
                 String line = null;
                 while ((line = br.readLine()) != null) {

@@ -58,7 +58,7 @@ public class FastCallSNP {
     double segregationPValueThresh = 0.001; //分离P值
     double sequencingErrorRate = 0.1; //测序错误率
     
-    
+
     public FastCallSNP () {
         this.creatFactorialMap();
         this.localTest(1);
@@ -308,6 +308,8 @@ public class FastCallSNP {
         //In any individual, alt allele show up 2 times when 2 < depth < 5. Pick up
         //In any individual, alt allele show up > individualDepthRatioThresh, when depth >= 5. Pick up
         //When depth is low, tend to have assembly errors, LTR
+        
+        //individualDepthRatioThresh:
         
         TByteHashSet altAlleleSet = new TByteHashSet();
         for (int i = 0; i < pAlleleCount[0].length; i++) {
@@ -866,7 +868,7 @@ public class FastCallSNP {
         sb.append("##INFO=<ID=DI,Number=2,Type=Integer,Description=\"").append("Number of deletion and insertion type").append("\">\n");
         sb.append("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"").append("Genotype").append("\">\n");
         sb.append("##FORMAT=<ID=AD,Number=.,Type=Integer,Description=\"").append("Allelic depths for the reference and alternate alleles in the order listed").append("\">\n");
-        sb.append("##FORMAT=<ID=GL,Number=.,Type=Integer,Description=\"").append("Genotype likelihoods for 0/0, 0/1, 1/1, or  0/0, 0/1, 0/2, 1/1, 1/2, 2/2 if 2 alt alleles").append("\">\n");
+        sb.append("##FORMAT=<ID=PL,Number=G,Type=Integer,Description=\"").append("Genotype likelihoods for 0/0, 0/1, 1/1, or  0/0, 0/1, 0/2, 1/1, 1/2, 2/2 if 2 alt alleles").append("\">\n");
         return sb.toString();
     }
     
@@ -910,6 +912,6 @@ public class FastCallSNP {
     public static void main (String[] args) {
         System.out.println("This is the entrance of FastCall");
         new FastCallSNP (args[0]);
-        //new FastCallSNP (); //for test
+        //new FastCallSNP (); //for
     }
 }
