@@ -33,3 +33,4 @@ Aoyue Bi
 
 [https://aoyuebi.wixsite.com/bay9624](https://aoyuebi.wixsite.com/bay9624)
 
+Thanks Dr. Gao (Qiang Gao in BGI) for helping me organizing my ideas and provide me perl script.
