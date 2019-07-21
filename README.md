@@ -27,7 +27,7 @@ From linux command line:
 ### Work Flowchart
 
 ![Flowchart]
-(https://ibb.co/vB67G3m)
+(<a href="https://ibb.co/vB67G3m"><img src="https://i.ibb.co/BP5Xxyj/Monitor-flowchart-English.jpg" alt="Monitor-flowchart-English" border="0" /></a>)
 
 ### Contributor
 Aoyue Bi
