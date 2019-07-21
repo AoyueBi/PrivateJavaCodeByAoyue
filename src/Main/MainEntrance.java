@@ -35,10 +35,7 @@ public class MainEntrance {
 
         new Monitor(args[0],args[1],args[2],args[3]);
         //new Monitor().monitor("6", "6", "fbgb", "shuch");
-        
-        Monitor m = new Monitor();
-        m.monitor("4", "4", "/shuudi./9djio", "sudf/dhueu");
-        
+                
        //new MainEntrance();
         
     }
