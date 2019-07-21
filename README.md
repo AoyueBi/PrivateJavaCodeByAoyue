@@ -24,6 +24,10 @@ From linux command line:
 - **@param3**: The sh file to produce the job num running now eg:`ps aux|grep aoyue|grep samtools|grep view|wc -l `
 - **@param4**: All the CMDs in one script, one line one sample, please DO NOT add & symbol at the end of each line.
 
+### Work Flowchart
+
+![](https://ibb.co/vB67G3m '''')
+
 ### Contributor
 Aoyue Bi
 
