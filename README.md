@@ -5,6 +5,9 @@ Some easy code  written by myself ~
 ## Aoyue-monitor 
 [https://github.com/AoyueBi/PrivateJavaCodeByAoyue/releases](https://github.com/AoyueBi/PrivateJavaCodeByAoyue/releases)
 
+### Overview
+Monitor the number of system tasks and submit your task automatically, like the job submission system  (qusb || lsf).
+
 **Hello!** To use this **Aoyue-monitor** jar, please add **4** parameters and prepare **two** files.
 
 * @param1: keepjobnum eg: **20** 
