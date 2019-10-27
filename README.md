@@ -5,6 +5,9 @@ Some easy code  written by myself ~
 ## Aoyue-monitor 
 [https://github.com/AoyueBi/PrivateJavaCodeByAoyue/releases](https://github.com/AoyueBi/PrivateJavaCodeByAoyue/releases)
 
+### Overview
+Monitor the number of system tasks and submit your task automatically, like the job submission system  (qusb || lsf).
+
 **Hello!** To use this **Aoyue-monitor** jar, please add **4** parameters and prepare **two** files.
 
 * @param1: keepjobnum eg: **20** 
@@ -23,6 +26,10 @@ From linux command line:
 - **@param2**: Unit: min, the interval time you wanna check the ps aux process
 - **@param3**: The sh file to produce the job num running now eg:`ps aux|grep aoyue|grep samtools|grep view|wc -l `
 - **@param4**: All the CMDs in one script, one line one sample, please DO NOT add & symbol at the end of each line.
+
+### Work Flowchart
+
+<a href="https://ibb.co/vB67G3m"><img src="https://i.ibb.co/BP5Xxyj/Monitor-flowchart-English.jpg" alt="Monitor-flowchart-English" border="0" /></a>
 
 ### Contributor
 Aoyue Bi
