@@ -36,7 +36,7 @@ class GERPcp {
         //this.crossMapConvert();
         this.makeV3V4Map();
         this.mkV3V4mapBYBIXIAOYUE();
-//        this.mkV4Gerp();
+        this.mkV4Gerp();
     }
     
      public void mkV4Gerp () {

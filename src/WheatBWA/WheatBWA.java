@@ -34,13 +34,13 @@ public class WheatBWA {
 //        this.mkMd5();
 //        this.checkMd5();
 //        this.sampleData(); //单线程单个抽样
-        this.sampleFastq(); //多线程多个抽样
-        this.fastQC();
+        //this.sampleFastq(); //多线程多个抽样
+        //this.fastQC();
 //        this.alignBWA();
 //        this.listSpecificalFiles();
 //        this.samtoolsSort();
 //        this.samtoolsMerge();
-        this.pipeline();
+       // this.pipeline();
 //        this.statReadLength();
 //        this.statScore();
         this.sampleBamfile();
@@ -58,13 +58,13 @@ public class WheatBWA {
         
         String outfileDirs = "/data2/aoyue/fastCall_project/bam/";
         String infileDirS = "/data2/sharedData/wheat_Jiao/splitBamfile/001/";
-        String scriptDirS = "/data2/aoyue/fastCall_project/";
+        String scriptDirS = "/Users/Aoyue/Documents/";
         
         /********************** 根据表格进行抽样 **********************************/
-        String tfileS = "/data2/aoyue/fastCall_project/taxaFastCalltest.t.txt";
-        RowTable<String> t = new RowTable<>(tfileS);
-        List<String> namelist = t.getColumn(0);
-        Collections.sort(namelist);
+//        String tfileS = "/data2/aoyue/fastCall_project/taxaFastCalltest.t.txt";
+//        RowTable<String> t = new RowTable<>(tfileS);
+//        List<String> namelist = t.getColumn(0);
+//        Collections.sort(namelist);
         
         /********************** 根据文件夹进行抽样 **********************************/
 //        File[] fs = new File(infileDirS).listFiles();
@@ -77,9 +77,10 @@ public class WheatBWA {
 //        Collections.sort(namelist);
         
         /********************** 根据字符串进行抽样 **********************************/
-//        String name = "AFG-L1";
-//        List<String> namelist = new ArrayList<>();
-//        namelist.add(name);
+        //String name = "AFG-L1";
+        String name = "TW0088";
+        List<String> namelist = new ArrayList<>();
+        namelist.add(name);
         
         /********************** 抽样1：run java包直接进行抽样 **********************************/
         namelist.parallelStream().forEach(taxa ->{
@@ -898,8 +899,8 @@ public class WheatBWA {
     
     
     public static void main (String[] args){
-        //new WheatBWA();
-        new ProcessVCF();
+        new WheatBWA();
+        //new ProcessVCF();
         System.out.println("\n**********************************" );
         System.out.println("Here is the main class of WheatBWA" );
         

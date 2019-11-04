@@ -20,8 +20,8 @@ import utils.PStringUtils;
  */
 public class ProcessVCF {
     public ProcessVCF (){
-        this.sampleVCFdataInOrder();
-        this.sampleVCFdataRandom();
+        //this.sampleVCFdataInOrder();
+        //this.sampleVCFdataRandom();
         //this.sampleVCFdataRandom2(); //该方法弃用
         
     }

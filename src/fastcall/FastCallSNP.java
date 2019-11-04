@@ -55,7 +55,8 @@ public class FastCallSNP {
     int binSize = 100000;
     double individualDepthRatioThresh = 0.4; //个体深度率
     double individualThirdAlleleRatioThresh = 0.2; //个体第三个等位基因率
-    double segregationPValueThresh = 0.001; //分离P值
+    //double segregationPValueThresh = 0.001; //分离P值
+    double segregationPValueThresh = 1;
     double sequencingErrorRate = 0.1; //测序错误率
     
 
