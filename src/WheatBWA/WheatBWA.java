@@ -7,7 +7,6 @@ package WheatBWA;
 
 import WheatGBS.DataProcessor;
 import WheatGBS.PlateAndID;
-import com.google.common.primitives.Bytes;
 import format.table.RowTable;
 import format.table.TableInterface;
 import java.io.BufferedReader;

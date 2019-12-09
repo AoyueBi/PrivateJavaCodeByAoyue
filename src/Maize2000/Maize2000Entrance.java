@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import utils.CrossMapUtils;
+import analysis.maizeGeneticLoad.CrossMapUtils;
 import utils.IOFileFormat;
 import utils.IOUtils;
 import utils.PStringUtils;

@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="PublicPlantGenetics" />
     <orderEntry type="module" module-name="GeneticLoad" />
     <orderEntry type="module" module-name="GroupPlantGenetics" />
+    <orderEntry type="module" module-name="PrivatePlantGenetics" />
   </component>
 </module>
