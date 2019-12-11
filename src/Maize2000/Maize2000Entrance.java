@@ -5,18 +5,13 @@
  */
 package Maize2000;
 
-import format.table.RowTable;
+import analysis.maizeGeneticLoad.CrossMapUtils;
+import utils.IOUtils;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import analysis.maizeGeneticLoad.CrossMapUtils;
-import utils.IOFileFormat;
-import utils.IOUtils;
-import utils.PStringUtils;
 
 /**
  *
