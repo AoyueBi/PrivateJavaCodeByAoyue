@@ -179,29 +179,29 @@ public class WheatBWA {
                     int cal =0; //每次进行内部定义，判断这10个值的大小并统计；
                     for(byte i : byte10){
 //                        if(i < 36) { //Phred值 3 + 33 
-//                            cal++;
+//                            calwindow++;
 //                        }
                         if(i < 43) { //Phred值 10 + 33 
                             cal++;
                         }
 //                        if(i < 48) { //Phred值 15 + 33 
-//                            cal++;
+//                            calwindow++;
 //                        }
 //                        if(i < 53) { //Phred值 20 + 33 
-//                            cal++;
+//                            calwindow++;
 //                        }
 //                        if(i < 55) { //Phred值 22 + 33 
-//                            cal++;
+//                            calwindow++;
 //                        }
 //                        if(i < 63) { //Phred值 30 + 33 
-//                            cal++;
+//                            calwindow++;
 //                        }
                         //System.out.println(i);
                     }
                     if(cal > 9){
                         unqualifiedReads++;
                         
-                        //System.out.println(cal);
+                        //System.out.println(calwindow);
                         //System.out.println(name + "_1.score.......... this read 不合格");
                     }
                 }

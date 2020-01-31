@@ -5,18 +5,13 @@
  */
 package vcf;
 
-import static cern.clhep.Units.s;
-import gnu.trove.list.array.TIntArrayList;
+import utils.IOUtils;
+import utils.PStringUtils;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import utils.IOUtils;
-import utils.PStringUtils;
+import java.util.*;
 
 /**
  *
@@ -414,7 +409,7 @@ public class VCFtools {
         //fs = IOUtils.listFilesEndsWith(fs, ".vcf");
         List<File> fsList = Arrays.asList(fs);
         fsList.stream().forEach(f -> {
-            //Start to cal the time beginning
+            //Start to calwindow the time beginning
             long startTime = System.nanoTime();
             Calendar cal = Calendar.getInstance();
             int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -422,7 +417,7 @@ public class VCFtools {
             int second = cal.get(Calendar.SECOND);
             System.out.println("******************************************************");
             System.out.println(String.format("%d:%d:%d\t", hour, minute, second) + "Now starting to " + f.getName() + " heterozygote propotion;");
-            //Start to cal heterozygous
+            //Start to calwindow heterozygous
             try {
                 String infileS = f.getAbsolutePath();
                 String siteoutfileS = new File(outfileDirS, f.getName().split(".vc")[0] + "_SNPheter.txt").getAbsolutePath();
