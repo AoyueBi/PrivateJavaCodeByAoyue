@@ -5,13 +5,12 @@
  */
 package WheatGBS;
 
-import format.table.RowTable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import pgl.infra.table.RowTable;
 
 /**
  *

@@ -9,7 +9,7 @@ package maizeGeneticLoad;
 
 import com.koloboke.collect.map.hash.HashIntIntMap;
 import com.koloboke.collect.map.hash.HashIntIntMaps;
-import format.table.RowTable;
+import deprecated.analysis.maizeGeneticLoad.CrossMapUtils;
 import gnu.trove.list.array.TIntArrayList;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,9 +17,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import analysis.maizeGeneticLoad.CrossMapUtils;
-import utils.IOUtils;
-import utils.PStringUtils;
+
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
 
 /**
  *

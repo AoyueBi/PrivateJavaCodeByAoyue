@@ -5,13 +5,14 @@
  */
 package Maize2000;
 
-import analysis.maizeGeneticLoad.CrossMapUtils;
-import utils.IOUtils;
+
+import deprecated.analysis.maizeGeneticLoad.CrossMapUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import pgl.infra.utils.IOUtils;
 
 /**
  *

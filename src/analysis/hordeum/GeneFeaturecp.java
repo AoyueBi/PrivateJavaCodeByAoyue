@@ -5,24 +5,18 @@
  */
 package analysis.hordeum;
 
-import format.genomeAnnotation.*;
-import format.dna.FastaByte;
-import format.dna.SequenceByte;
-import format.position.ChrPos;
-import format.range.Range;
-import format.range.RangeValStr;
-import format.range.RangeValStrs;
-import format.range.Ranges;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import utils.IOUtils;
-import utils.PStringUtils;
+import pgl.infra.dna.FastaByte;
+import pgl.infra.dna.SequenceByte;
+import pgl.infra.position.ChrPos;
+import pgl.infra.range.Range;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
 
 
 

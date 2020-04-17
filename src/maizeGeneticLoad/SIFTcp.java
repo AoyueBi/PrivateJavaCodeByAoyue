@@ -7,7 +7,6 @@
  */
 package maizeGeneticLoad;
 
-import format.genomeAnnotation.GeneFeature;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,8 +16,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import utils.IOUtils;
-import utils.PStringUtils;
+import pgl.infra.genomeAnnotation.GeneFeature;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
 
 /**
  *

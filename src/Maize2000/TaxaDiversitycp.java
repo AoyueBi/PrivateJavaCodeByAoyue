@@ -5,17 +5,13 @@
  */
 package Maize2000;
 
-import format.table.RowTable;
-import format.tree.Newick;
+
+import pgl.infra.tree.Newick;
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import utils.IOUtils;
+import java.util.*;
 
 /**
  *

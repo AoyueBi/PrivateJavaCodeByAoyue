@@ -5,8 +5,8 @@
  */
 package vcf;
 
-import utils.IOUtils;
-import utils.PStringUtils;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

@@ -5,10 +5,10 @@
  */
 package WheatBWA;
 
-import format.table.RowTable;
-import format.table.TableInterface;
-import utils.IOUtils;
-import utils.PStringUtils;
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
+import pgl.infra.table.TableInterface;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

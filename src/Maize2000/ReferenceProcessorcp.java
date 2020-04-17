@@ -5,10 +5,12 @@
  */
 package Maize2000;
 
-import format.dna.FastaByte;
+
 import java.io.File;
 import java.util.ArrayList;
-import utils.IOFileFormat;
+import pgl.infra.dna.FastaByte;
+import pgl.infra.utils.IOFileFormat;
+
 
 /**
  *

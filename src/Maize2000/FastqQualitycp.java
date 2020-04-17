@@ -7,11 +7,10 @@ package Maize2000;
  */
 
 
-import format.alignment.ShortreadPEAlignment;
-import format.dna.Fastq;
-import format.table.RowTable;
-import format.table.TableInterface;
-import graphcis.r.DensityPlot;
+
+import pgl.infra.dna.Fastq;
+import pgl.infra.table.TableInterface;
+import pgl.graphcis.r.DensityPlot;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,7 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import utils.IOUtils;
+import pgl.infra.alignment.gen2.ShortreadPEAlignment;
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
 
 /**
  *

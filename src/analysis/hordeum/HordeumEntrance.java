@@ -6,14 +6,15 @@
 package analysis.hordeum;
 
 import aoyue.analysis.MaizeGeneticLoad.Rangescp;
-import format.range.Range;
-import format.table.RowTable;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.List;
-import utils.IOUtils;
-import utils.PStringUtils;
+import pgl.infra.range.Range;
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
 
 /**
  *

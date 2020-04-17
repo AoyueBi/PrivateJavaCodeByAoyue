@@ -5,8 +5,7 @@
  */
 package WheatUnclass;
 
-import format.table.RowTable;
-import format.tree.Newick;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
@@ -16,8 +15,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import utils.IOUtils;
-import utils.PStringUtils;
+import pgl.infra.table.RowTable;
+import pgl.infra.tree.Newick;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
 
 /**
  *

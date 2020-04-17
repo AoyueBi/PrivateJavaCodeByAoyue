@@ -5,19 +5,15 @@
  */
 package WheatGBS;
 
-import xujun.analysis.rnaseq.*;
-import format.table.RowTable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import utils.IOUtils;
-import xuebo.analysis.annotation.FStringUtils;
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
 
 /**
  *
@@ -55,9 +51,9 @@ public class GBScp {
             String temp1=null;String seq1=null;
             String temp2=null;String seq2=null;           
             try {
-                BufferedReader br1 = utils.IOUtils.getTextGzipReader(infile1);
-                BufferedReader br2 = utils.IOUtils.getTextGzipReader(infile2);   
-                BufferedWriter bw = utils.IOUtils.getTextWriter(outfile);
+                BufferedReader br1 = IOUtils.getTextGzipReader(infile1);
+                BufferedReader br2 = IOUtils.getTextGzipReader(infile2);   
+                BufferedWriter bw = IOUtils.getTextWriter(outfile);
                 while ((temp1 = br2.readLine()) != null) {
                     count1++;
                     seq1=br2.readLine(); /*读取FASTQ文件的第二行，存为序列 seq1*/

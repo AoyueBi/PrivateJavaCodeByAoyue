@@ -5,13 +5,16 @@
  */
 package Maize2000;
 
-import format.table.RowTable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import utils.PArrayUtils;
-import utils.IOFileFormat;
+import pgl.infra.utils.PArrayUtils;
+import pgl.infra.utils.IOFileFormat;
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
+
 
 /**
  *
@@ -35,29 +38,6 @@ Q1261	/public-supool/home/biaoyue/output_data_rmdup_350bplibrary/K13HGL0105.sort
         //updateTaxaBamMap(infileS1, infileS2, outfileS);
        // this.testTaxaDuplicates();
         this.iftest();
-    }
-    
-    private void testTaxaDuplicates () {
-        String infileS = "/Users/feilu/Desktop/taxaBam.txt";
-        RowTable<String> t = new RowTable<>(infileS);
-        /*list可以有重复的元素*/
-        List<String> taxaList = t.getColumn(0);
-        /*将taxaList转化为数组taxaArray，数组大小为taxaList的长度。
-        将taxaArray转化为uTaxaArray,并排序*/
-        String[] taxaArray = taxaList.toArray(new String[taxaList.size()]);
-        String[] uTaxaArray = PArrayUtils.getUniqueStringArray(taxaArray);
-        Arrays.sort(uTaxaArray);
-        /*cnts是一个整数类型的数组，数组大小是uTaxaArray数组的长度。在uTaxaArray里搜索taxaArry数组中的元素key，若存在，则返回key在uTaxaArray数组中的索引。
-        然后，cnt数组所在的索引处的值，加1.如果数组的值小于2，则继续，如果大于2，则打印出*/
-        int[] cnts = new int[uTaxaArray.length];
-        for (int i = 0; i < taxaArray.length; i++) {
-            int index = Arrays.binarySearch(uTaxaArray, taxaArray[i]);
-            cnts[index]++;
-        }
-        for (int i = 0; i < cnts.length; i++) {
-            if (cnts[i] < 2) continue;
-            System.out.println(uTaxaArray[i]); /*已做检验，意思是如果没有重复的，就继续，否则打印出重复的TAXA名字*/
-        }
     }
     
     public void iftest(){

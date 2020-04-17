@@ -8,7 +8,13 @@ package WheatGBS;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.Arrays;
-import utils.IOUtils;
+
+import pgl.infra.utils.PArrayUtils;
+import pgl.infra.utils.IOFileFormat;
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
+import pgl.infra.utils.PStringUtils;
+import pgl.infra.table.TableInterface;
 
 /**
  *

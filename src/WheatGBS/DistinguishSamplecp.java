@@ -5,31 +5,20 @@
  */
 package WheatGBS;
 
-import xujun.analysis.rnaseq.*;
-import com.itextpdf.text.pdf.AcroFields.Item;
 import com.koloboke.collect.map.hash.HashByteByteMap;
 import com.koloboke.collect.map.hash.HashByteByteMaps;
-import format.dna.Fastq;
-import format.dna.Read;
-import format.table.RowTable;
-import static java.lang.Integer.sum;
+import pgl.infra.dna.Read;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.io. * ;
-import static java.lang.String.format;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.GZIPOutputStream;
 import jxl. * ;
 import jxl.read.biff.BiffException;
-import utils.IOFileFormat;
-import utils.IOUtils;
+import pgl.infra.table.RowTable;
+import pgl.infra.utils.IOUtils;
 
 /**
  *
@@ -209,9 +198,9 @@ public class DistinguishSamplecp {
             String outfile=new File(outputDirS,"count").getAbsolutePath();
             String seq = null;
             try {
-                BufferedReader br1 = utils.IOUtils.getTextReader(infile1);                               
+                BufferedReader br1 = IOUtils.getTextReader(infile1);                               
                 BufferedWriter[] bws = new BufferedWriter[rowNumber];//这里只是创建了一个bufferedreader类型的数组 并没有对里面的各个new
-                BufferedWriter bw = utils.IOUtils.getTextWriter(outfile);                               
+                BufferedWriter bw = IOUtils.getTextWriter(outfile);                               
                 for (int i = 0; i < bws.length; i++) {
                     String outfileS = new File (outputDirS, nameList.get(i)).getAbsolutePath();
                     bws[i] = IOUtils.getTextWriter(outfileS);
@@ -344,11 +333,11 @@ public class DistinguishSamplecp {
             String outfile2 = new File (outputDirS, name+"_2.fq.gz").getAbsolutePath();
             String outfileFasta = new File (outputFastaDirS, name+"_1.fa").getAbsolutePath();
             try {
-                BufferedReader br1 = utils.IOUtils.getTextGzipReader(infile1);
-                BufferedReader br2 = utils.IOUtils.getTextGzipReader(infile2);
-                BufferedWriter bw1 = utils.IOUtils.getTextGzipWriter(outfile1);
-                BufferedWriter bw2 = utils.IOUtils.getTextGzipWriter(outfile2);
-                BufferedWriter bwf = utils.IOUtils.getTextGzipWriter(outfileFasta);
+                BufferedReader br1 = IOUtils.getTextGzipReader(infile1);
+                BufferedReader br2 = IOUtils.getTextGzipReader(infile2);
+                BufferedWriter bw1 = IOUtils.getTextGzipWriter(outfile1);
+                BufferedWriter bw2 = IOUtils.getTextGzipWriter(outfile2);
+                BufferedWriter bwf = IOUtils.getTextGzipWriter(outfileFasta);
                 String temp = null;
                 while ((temp = br1.readLine()) != null) {
                     bw1.write(temp);
@@ -393,11 +382,11 @@ public class DistinguishSamplecp {
             String outfile2 = new File (outputDirS, name+"_2.fq").getAbsolutePath();
             String outfileFasta = new File (outputFastaDirS, name+"_1.fa").getAbsolutePath();
             try {
-                BufferedReader br1 = utils.IOUtils.getTextReader(infile1);
-                BufferedReader br2 = utils.IOUtils.getTextReader(infile2);
-                BufferedWriter bw1 = utils.IOUtils.getTextWriter(outfile1);
-                BufferedWriter bw2 = utils.IOUtils.getTextWriter(outfile2);
-                BufferedWriter bwf = utils.IOUtils.getTextWriter(outfileFasta);
+                BufferedReader br1 = IOUtils.getTextReader(infile1);
+                BufferedReader br2 = IOUtils.getTextReader(infile2);
+                BufferedWriter bw1 = IOUtils.getTextWriter(outfile1);
+                BufferedWriter bw2 = IOUtils.getTextWriter(outfile2);
+                BufferedWriter bwf = IOUtils.getTextWriter(outfileFasta);
                 String temp = null;
                 int cnt = 0;
                 while ((temp = br1.readLine()) != null) {
@@ -454,8 +443,8 @@ public class DistinguishSamplecp {
             int cnt=0;
             int sum=0;
             try {
-                BufferedReader br = utils.IOUtils.getTextReader(infile);
-                BufferedWriter bw = utils.IOUtils.getTextWriter(outfile);
+                BufferedReader br = IOUtils.getTextReader(infile);
+                BufferedWriter bw = IOUtils.getTextWriter(outfile);
                 br.readLine();br.readLine();br.readLine();br.readLine();                
                 while (br.readLine() != null) {
                     for (int i = 3; i < rt.getRowNumber(); i++) {
@@ -487,8 +476,8 @@ public class DistinguishSamplecp {
         String seq=null;
         String name=null;
         try {
-                BufferedReader br = utils.IOUtils.getTextReader(inputfile);
-                BufferedWriter bw = utils.IOUtils.getTextWriter(outputfile);              
+                BufferedReader br = IOUtils.getTextReader(inputfile);
+                BufferedWriter bw = IOUtils.getTextWriter(outputfile);              
                 while ((name=br.readLine()) != null) {
                     bw.write(name+"\n");
                     seq=br.readLine().substring(12);
